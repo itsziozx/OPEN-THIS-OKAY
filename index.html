@@ -13,10 +13,10 @@
             <div class="gameboy-screen">
                 <div class="screen-content">
                     <h1 class="title">BIRTHDAY GIFT</h1>
-                    <div class="loading-text">&gt; INITIALIZING..._</div>
+                    <div class="loading-text" id="loading-text">&gt; INITIALIZING..._</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
-                        <div class="progress-text">38%</div>
+                        <div class="progress-text" id="progress-text">0%</div>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="gameboy-screen">
                     <div class="screen-content">
                         <h1 class="birthday-title">Happy Birthday!</h1>
-                        <div class="start-text">Press Start Button</div>
+                        <div class="start-text">Press START</div>
                         <div class="screen-info">
                             <span class="dot-matrix">DOT MATRIX WITH STEREO SOUND</span>
                             <span class="battery">
@@ -71,7 +71,7 @@
 
                 <div class="bottom-controls">
                     <button class="control-btn select-btn">SELECT</button>
-                    <button class="control-btn start-btn">START</button>
+                    <button class="control-btn start-btn" id="start-btn">START</button>
                 </div>
 
                 <div class="speaker-grille"></div>
@@ -82,11 +82,12 @@
         <div id="message-screen" class="screen">
             <div class="page-container">
                 <div class="page-screen">
-                        <!-- Content will be populated by JavaScript -->
+                    <div class="page-header">📝 MESSAGE</div>
+                    <div class="message-content" id="message-content"></div>
+                    <button class="skip-btn" id="skip-btn">SKIP</button>
                 </div>
                 <div class="page-controls">
-                    <button class="page-btn back-btn" data-page="main">KEMBALI</button>
-                    <button class="page-btn continue-btn">SELANJUTNYA</button>
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
                 </div>
             </div>
         </div>
@@ -95,14 +96,24 @@
         <div id="gallery-screen" class="screen">
             <div class="page-container">
                 <div class="page-screen">
-                    <div class="page-header">Gallery</div>
+                    <div class="page-header">🖼️ GALLERY</div>
                     <div class="gallery-content">
-                        <!-- Content will be populated by JavaScript -->
+                        <div class="photobox-header">
+                            <div class="photobox-dot red"></div>
+                            <span class="photobox-title">PHOTOBOX</span>
+                            <div class="photobox-dot green"></div>
+                        </div>
+                        <div class="photobox-progress" id="photobox-progress">📸 READY TO PRINT</div>
+                        <div class="photo-display" id="photo-display">
+                            <div class="photo-placeholder">Press START PRINT to begin</div>
+                        </div>
+                        <div class="photobox-controls">
+                            <button class="photo-btn" id="photo-btn">START PRINT</button>
+                        </div>
                     </div>
                 </div>
                 <div class="page-controls">
-                    <button class="page-btn back-btn" data-page="main">KEMBALI</button>
-                    <button class="page-btn continue-btn">SELANJUTNYA</button>
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
                 </div>
             </div>
         </div>
@@ -111,14 +122,25 @@
         <div id="music-screen" class="screen">
             <div class="page-container">
                 <div class="page-screen">
-                    <div class="page-header">Music Player</div>
+                    <div class="page-header">🎵 MUSIC</div>
                     <div class="music-content">
-                        <!-- Content will be populated by JavaScript -->
+                        <div class="playlist">
+                            <div class="song" data-index="0">🎵 1. Happy Birthday To You</div>
+                            <div class="song" data-index="1">🎵 2. Best Day Ever</div>
+                            <div class="song" data-index="2">🎵 3. For You My Friend</div>
+                            <div class="song" data-index="3">🎵 4. Celebration</div>
+                            <div class="song" data-index="4">🎵 5. Forever Young</div>
+                        </div>
+                        <div class="music-controls">
+                            <button id="prev-btn">⏮</button>
+                            <button id="play-pause-btn">⏯</button>
+                            <button id="next-btn">⏭</button>
+                        </div>
+                        <div class="now-playing" id="now-playing">🎜 Not Playing</div>
                     </div>
                 </div>
                 <div class="page-controls">
-                    <button class="page-btn back-btn" data-page="main">KEMBALI</button>
-                    <button class="page-btn continue-btn">SELANJUTNYA</button>
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
                 </div>
             </div>
         </div>
@@ -128,7 +150,7 @@
             <div class="page-container">
                 <div class="page-screen">
                     <div class="tetris-header">
-                        <div class="tetris-title">Tetris</div>
+                        <div class="tetris-title">🎮 TETRIS</div>
                         <div class="tetris-stats">
                             <div class="stat">Score: <span id="score">0</span></div>
                             <div class="stat">Level: <span id="level">1</span></div>
@@ -140,12 +162,12 @@
                     </div>
                     <div class="tetris-controls">
                         <button class="tetris-btn" id="left-btn">◀</button>
-                        <button class="tetris-btn" id="rotate-btn">ROTATE</button>
+                        <button class="tetris-btn" id="rotate-btn">↻ ROTATE</button>
                         <button class="tetris-btn" id="right-btn">▶</button>
                     </div>
                 </div>
                 <div class="page-controls">
-                    <button class="page-btn back-btn" data-page="main">KEMBALI</button>
+                    <button class="page-btn back-btn" data-page="main">BACK</button>
                 </div>
             </div>
         </div>
@@ -154,22 +176,20 @@
         <div id="game-over-modal" class="modal">
             <div class="modal-content">
                 <div class="game-over-text">GAME OVER</div>
-                <button class="modal-btn" id="confirm-btn">CONFIRM</button>
+                <button class="modal-btn" id="game-over-ok">OK</button>
             </div>
         </div>
 
         <!-- Final Message Modal -->
         <div id="final-message-modal" class="modal">
             <div class="modal-content">
-                <div class="final-message-title">INGET YA!</div>
+                <div class="final-message-title">🎂 HAPPY BIRTHDAY! 🎂</div>
                 <div class="final-message-text">
-                    <p>walaupun kamu kalah,</p>
-                    <p>tapi kamu selalu menang</p>
-                    <p>kok di hati aku, HEHE</p>
-                    <p>^_^</p>
-                    <p class="love-text">I LOVE YOU &lt;3</p>
+                    <p>Even if you lose in the game,</p>
+                    <p>you always win in my heart!</p>
+                    <p class="love-text">💕 I LOVE YOU 💕</p>
                 </div>
-                <button class="modal-btn" id="ok-btn">OK</button>
+                <button class="modal-btn" id="final-ok">OK</button>
             </div>
         </div>
     </div>
@@ -177,4 +197,3 @@
     <script src="script.js"></script>
 </body>
     </html>
-    
