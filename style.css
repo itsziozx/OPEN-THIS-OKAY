@@ -24,7 +24,7 @@ body {
     align-items: center;
 }
 
-/* Enhanced Screen Transitions */
+/* Screen Transitions */
 .screen {
     display: none;
     opacity: 0;
@@ -35,34 +35,17 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
 .screen.active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex !important;
     opacity: 1;
     transform: translateY(0);
 }
 
-.screen.fade-out {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.screen.fade-in {
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Loading Screen Styles */
-#loading-screen {
-    background: #000;
-    color: #00ff00;
-}
-
+/* Loading Screen */
 #loading-screen .gameboy-screen {
     width: 600px;
     height: 400px;
@@ -72,7 +55,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
 }
 
 #loading-screen .screen-content {
@@ -87,27 +69,23 @@ body {
     color: #00ff00;
     margin-bottom: 40px;
     letter-spacing: 4px;
-    animation: titleGlow 2s ease-in-out infinite alternate; /* Tambahkan ini */
+    animation: glow 1.5s infinite alternate;
 }
 
-/* Tambahkan keyframe ini */
-@keyframes titleGlow {
-    from {
-        text-shadow: 0 0 10px #00ff00;
-    }
-    to {
-        text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
-    }
+@keyframes glow {
+    from { text-shadow: 0 0 10px #00ff00; }
+    to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
 }
 
 #loading-screen .loading-text {
     font-size: 24px;
     color: #00ff00;
     margin-bottom: 30px;
-    text-align: left;
-    padding-left: 20px;
     animation: blink 1s infinite;
-    transition: opacity 0.3s ease; /* Tambahkan ini */
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
 }
 
 .progress-bar {
@@ -115,7 +93,7 @@ body {
     height: 30px;
     background: #333;
     border: 2px solid #00ff00;
-    margin: 0 auto 30px;
+    margin: 0 auto;
     position: relative;
     border-radius: 5px;
     overflow: hidden;
@@ -124,13 +102,12 @@ body {
 .progress-fill {
     height: 100%;
     background: #00ff00;
-    width: 38%;
+    width: 0%;
     transition: width 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
-/* Tambahkan efek shine */
 .progress-fill::after {
     content: '';
     position: absolute;
@@ -155,53 +132,7 @@ body {
     color: #000;
     font-weight: bold;
     font-size: 16px;
-}
-
-#loading-screen .smile-text {
-    font-size: 32px;
-    color: #ffff00;
-    font-weight: bold;
-    margin-top: 20px;
-}
-
-/* Main Screen Entry Animation */
-#main-screen.screen-entering {
-    animation: mainScreenEnter 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes mainScreenEnter {
-    0% {
-        opacity: 0;
-        transform: scale(0.9) translateY(30px);
-    }
-    50% {
-        opacity: 0.7;
-        transform: scale(1.02) translateY(-5px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-/* Loading completion animation */
-.loading-complete {
-    animation: loadingSuccess 0.8s ease-in-out forwards;
-}
-
-@keyframes loadingSuccess {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.05);
-        filter: brightness(1.2);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+    z-index: 2;
 }
 
 /* Main Gameboy Styles */
@@ -211,10 +142,7 @@ body {
     background: linear-gradient(145deg, #e8e8e8, #d0d0d0);
     border-radius: 20px 20px 40px 40px;
     padding: 20px;
-    box-shadow: 
-        0 20px 40px rgba(0,0,0,0.3),
-        inset 0 2px 4px rgba(255,255,255,0.8),
-        inset 0 -2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.8);
     position: relative;
 }
 
@@ -238,6 +166,12 @@ body {
     height: 8px;
     background: #ff4444;
     border-radius: 50%;
+    animation: powerBlink 2s infinite;
+}
+
+@keyframes powerBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
 .brand-text {
@@ -254,55 +188,6 @@ body {
     margin-bottom: 20px;
     position: relative;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-}
-
-/* Gameboy elements staggered entry */
-.gameboy-screen {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.screen.active .gameboy-screen {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.2s;
-}
-
-.menu-buttons {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.screen.active .menu-buttons {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.4s;
-}
-
-.controls {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.screen.active .controls {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.6s;
-}
-
-.bottom-controls {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.screen.active .bottom-controls {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0.8s;
 }
 
 .gameboy-screen .screen-content {
@@ -353,8 +238,7 @@ body {
     border-radius: 50%;
 }
 
-
-/* Menu Buttons - Fixed Tetris Button */
+/* Menu Buttons */
 .menu-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -372,8 +256,8 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    text-transform: uppercase; /* Ensure consistent text formatting */
-    letter-spacing: 0.5px; /* Better letter spacing */
+    text-transform: uppercase;
+    color: white;
 }
 
 .menu-btn:hover {
@@ -383,51 +267,12 @@ body {
 
 .menu-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.message-btn {
-    background: linear-gradient(145deg, #4a90e2, #357abd);
-    color: white;
-}
-
-.message-btn:hover {
-    background: linear-gradient(145deg, #357abd, #2968a3);
-}
-
-.gallery-btn {
-    background: linear-gradient(145deg, #e74c3c, #c0392b);
-    color: white;
-}
-
-.gallery-btn:hover {
-    background: linear-gradient(145deg, #c0392b, #a93226);
-}
-
-.music-btn {
-    background: linear-gradient(145deg, #9b59b6, #8e44ad);
-    color: white;
-}
-
-.music-btn:hover {
-    background: linear-gradient(145deg, #8e44ad, #7d3c98);
-}
-
-.tetris-btn {
-    background: linear-gradient(145deg, #27ae60, #229954);
-    color: white;
-}
-
-.tetris-btn:hover {
-    background: linear-gradient(145deg, #229954, #1e8449);
-}
-
-/* Ensure all buttons have consistent focus states */
-.menu-btn:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-}
-
+.message-btn { background: linear-gradient(145deg, #4a90e2, #357abd); }
+.gallery-btn { background: linear-gradient(145deg, #e74c3c, #c0392b); }
+.music-btn { background: linear-gradient(145deg, #9b59b6, #8e44ad); }
+.tetris-btn { background: linear-gradient(145deg, #27ae60, #229954); }
 
 /* Controls */
 .controls {
@@ -438,8 +283,8 @@ body {
 }
 
 .dpad {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     position: relative;
 }
 
@@ -448,7 +293,7 @@ body {
     height: 100%;
     background: #333;
     position: relative;
-    border-radius: 8px;
+    border-radius: 50%;
 }
 
 .dpad-center div {
@@ -458,9 +303,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: default;
+    transition: background 0.2s;
 }
 
 .dpad-center div:hover {
@@ -468,38 +314,23 @@ body {
 }
 
 .dpad-up, .dpad-down {
-    width: 30px;
-    height: 25px;
+    width: 40px;
+    height: 30px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.dpad-up {
-    top: 0;
-    border-radius: 8px 8px 0 0;
-}
-
-.dpad-down {
-    bottom: 0;
-    border-radius: 0 0 8px 8px;
-}
-
+.dpad-up { top: 5px; border-radius: 8px 8px 0 0; }
+.dpad-down { bottom: 5px; border-radius: 0 0 8px 8px; }
 .dpad-left, .dpad-right {
-    width: 25px;
-    height: 30px;
+    width: 30px;
+    height: 40px;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.dpad-left {
-    left: 0;
-    border-radius: 8px 0 0 8px;
-}
-
-.dpad-right {
-    right: 0;
-    border-radius: 0 8px 8px 0;
-}
+.dpad-left { left: 5px; border-radius: 8px 0 0 8px; }
+.dpad-right { right: 5px; border-radius: 0 8px 8px 0; }
 
 .action-buttons {
     display: flex;
@@ -511,12 +342,13 @@ body {
     height: 50px;
     border: none;
     border-radius: 50%;
-    font-family: inherit;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    background: linear-gradient(145deg, #e74c3c, #c0392b);
+    color: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s;
 }
 
 .action-btn:hover {
@@ -524,21 +356,7 @@ body {
     box-shadow: 0 6px 12px rgba(0,0,0,0.4);
 }
 
-.action-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.b-btn {
-    background: linear-gradient(145deg, #e74c3c, #c0392b);
-    color: white;
-}
-
-.a-btn {
-    background: linear-gradient(145deg, #e74c3c, #c0392b);
-    color: white;
-}
-
+/* Bottom Controls */
 .bottom-controls {
     display: flex;
     justify-content: center;
@@ -555,7 +373,7 @@ body {
     font-family: inherit;
     font-size: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
 .control-btn:hover {
@@ -563,22 +381,21 @@ body {
     transform: translateY(-1px);
 }
 
+/* Speaker Grille */
 .speaker-grille {
     position: absolute;
     bottom: 20px;
     right: 20px;
     width: 40px;
     height: 40px;
-    background: 
-        radial-gradient(circle at 25% 25%, #333 2px, transparent 2px),
-        radial-gradient(circle at 75% 25%, #333 2px, transparent 2px),
-        radial-gradient(circle at 25% 75%, #333 2px, transparent 2px),
-        radial-gradient(circle at 75% 75%, #333 2px, transparent 2px),
-        radial-gradient(circle at 50% 50%, #333 2px, transparent 2px);
+    background: radial-gradient(circle at 25% 25%, #333 2px, transparent 2px),
+                radial-gradient(circle at 75% 25%, #333 2px, transparent 2px),
+                radial-gradient(circle at 25% 75%, #333 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, #333 2px, transparent 2px);
     background-size: 8px 8px;
 }
 
-/* Page Container Styles */
+/* Page Container */
 .page-container {
     width: 400px;
     height: 600px;
@@ -587,16 +404,18 @@ body {
     padding: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     border: 4px solid #ffd700;
+    display: flex;
+    flex-direction: column;
 }
 
 .page-screen {
-    width: 100%;
-    height: 480px;
+    flex: 1;
     background: #2d5016;
     border: 4px solid #1a1a1a;
     border-radius: 8px;
-    margin-bottom: 20px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .page-header {
@@ -610,9 +429,8 @@ body {
 
 .page-controls {
     display: flex;
-    justify-content: space-between;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .page-btn {
@@ -624,15 +442,9 @@ body {
     font-weight: bold;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.continue-btn {
-    order: 2; /* Right side */
-}
-
-.back-btn {
-    order: 1; /* Left side */
+    transition: all 0.2s;
+    background: #4a90e2;
+    color: white;
 }
 
 .page-btn:hover {
@@ -640,26 +452,19 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* Message Page Styles - Fixed Layout */
+/* Message Screen */
 .message-content {
-    height: calc(100% - 80px); /* Adjusted to match other pages */
-    overflow-y: auto;
+    flex: 1;
     padding: 15px;
-    background: #2d5016;
+    overflow-y: auto;
     color: #9bbc0f;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
 }
 
 .message-content::-webkit-scrollbar {
     width: 4px;
-}
-
-.message-content::-webkit-scrollbar-track {
-    background: #1a1a2e;
 }
 
 .message-content::-webkit-scrollbar-thumb {
@@ -667,25 +472,17 @@ body {
     border-radius: 2px;
 }
 
-.typing-cursor {
-    animation: blink 1s infinite;
-}
-
-/* Skip button positioned consistently with other pages */
 .skip-btn {
-    display: block;
-    margin: 0 auto 8px auto;
+    margin: 10px auto;
     padding: 6px 12px;
     background: #e74c3c;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: bold;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
+    width: fit-content;
 }
 
 .skip-btn:hover {
@@ -693,28 +490,13 @@ body {
     transform: scale(1.05);
 }
 
-.skip-btn:active {
-    transform: scale(0.95);
-}
-
-/* Remove the problematic overrides */
-#message-screen .page-screen {
-    height: 480px; /* Same as other pages */
-}
-
-/* Ensure consistent structure */
-#message-screen .page-container {
-    width: 400px;
-    height: 600px;
-    /* Same as other pages */
-}
-
-/* Gallery Page Styles */
+/* Gallery */
 .gallery-content {
+    flex: 1;
     padding: 15px;
-    height: calc(100% - 60px);
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .photobox-header {
@@ -725,7 +507,6 @@ body {
     padding: 8px 12px;
     border-radius: 4px;
     margin-bottom: 10px;
-    flex-shrink: 0;
 }
 
 .photobox-dot {
@@ -734,13 +515,8 @@ body {
     border-radius: 50%;
 }
 
-.photobox-dot.red {
-    background: #ff4444;
-}
-
-.photobox-dot.green {
-    background: #44ff44;
-}
+.photobox-dot.red { background: #ff4444; }
+.photobox-dot.green { background: #44ff44; }
 
 .photobox-title {
     color: #ffff00;
@@ -756,185 +532,38 @@ body {
     color: #9bbc0f;
     font-size: 11px;
     text-align: center;
-    min-height: 20px;
-    flex-shrink: 0;
 }
 
 .photo-display {
     background: #1a1a2e;
     border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-bottom: 15px;
     padding: 15px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1;
+    min-height: 200px;
     max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
 }
 
-/* Custom scrollbar for photo display */
-.photo-display::-webkit-scrollbar {
-    width: 6px;
-}
-
-.photo-display::-webkit-scrollbar-track {
-    background: #333;
-    border-radius: 3px;
-}
-
-.photo-display::-webkit-scrollbar-thumb {
-    background: #9bbc0f;
-    border-radius: 3px;
-}
-
-.photo-display::-webkit-scrollbar-thumb:hover {
-    background: #a0cc0f;
-}
-
-.photo-placeholder {
-    text-align: center;
-    color: #9bbc0f;
-    font-size: 12px;
-    margin-top: 50px;
-}
-
-/* Photo Strip Styles - Vertical Scrollable */
 .photo-strip {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 320px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    min-height: 100%;
-    position: relative;
-    overflow: hidden; /* Prevent content from spilling out */
-}
-
-.photo-strip-header {
-    text-align: center;
-    color: #333;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 15px 10px 10px 10px;
-    border-bottom: 2px solid #ccc;
-    background: #ffffff;
-    flex-shrink: 0; /* Prevent header from shrinking */
-    position: relative;
-    z-index: 2;
-}
-
-.photo-frames-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto; /* Make only the frames container scrollable */
-    overflow-x: hidden;
-    max-height: 220px; /* Limit height to enable scrolling */
-}
-
-/* Custom scrollbar for frames container */
-.photo-frames-container::-webkit-scrollbar {
-    width: 5px;
-}
-
-.photo-frames-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.photo-frames-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-}
-
-.photo-frames-container::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    gap: 10px;
 }
 
 .photo-frame {
-    width: 100%;
-    height: 150px;
     background: #f0f0f0;
     border: 3px solid #333;
     border-radius: 6px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
+    transition: all 0.3s;
 }
 
 .photo-frame.filled {
-    background: none; /* Remove gradient for image display */
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
-    transform: scale(1.02);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-}
-
-.photo-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 3px;
-    transition: opacity 0.3s ease;
-}
-
-.photo-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
-    padding: 10px 6px 6px 6px; /* Increased padding for larger frame */
-    border-radius: 0 0 3px 3px;
-}
-
-.photo-content {
-    color: #333;
-    font-size: 11px;
-    text-align: center;
-    padding: 5px;
-    font-weight: bold;
-    line-height: 1.2;
-}
-
-.photo-frame.filled .photo-overlay .photo-content {
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-    font-size: 10px;
-    text-align: center;
-    font-weight: bold;
-    line-height: 1.2;
-}
-
-.photo-strip-footer {
-    text-align: center;
-    color: #666;
-    font-size: 10px;
-    font-weight: bold;
-    background: #ffffff;
-    padding: 8px;
-    border-top: 2px solid #ccc;
-    flex-shrink: 0; /* Prevent footer from shrinking */
-    position: relative;
-    z-index: 1;
-}
-
-.photobox-controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: auto;
-    padding-top: 10px;
-    flex-shrink: 0;
 }
 
 .photo-btn {
@@ -944,110 +573,211 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
-    transition: all 0.2s ease;
+    width: 100%;
 }
 
-.photo-btn:hover {
+.photo-btn:hover:not(:disabled) {
     background: #c0392b;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .photo-btn:disabled {
     background: #666;
     cursor: not-allowed;
-    transform: none;
 }
 
-/* Loading state for images */
-.photo-image:not([complete]) {
-    opacity: 0.5;
-}
-
-.photo-frame .photo-content {
-    color: #333;
-    font-size: 12px;
-    text-align: center;
-    padding: 5px;
-    font-weight: bold;
-    line-height: 1.2;
-}
-
-/* Scroll indicator */
-.scroll-indicator {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    color: #9bbc0f;
-    font-size: 10px;
-    opacity: 0.7;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-}
-
-
-/* Music Page Styles - Updated for Spotify */
+/* Music Screen */
 .music-content {
+    flex: 1;
     padding: 15px;
-    height: calc(100% - 60px);
-    overflow-y: auto;
-}
-
-.spotify-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    gap: 10px;
 }
 
-.spotify-header {
-    text-align: center;
-    margin-bottom: 10px;
+.playlist {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
 }
 
-.spotify-logo {
-    color: #1db954;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.playlist-title {
-    color: #9bbc0f;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.spotify-embed-container {
-    background: #1a1a2e;
-    border-radius: 12px;
+.song {
     padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #9bbc0f;
+    margin-bottom: 5px;
+    background: #1a1a2e;
+    color: #9bbc0f;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.spotify-embed-container iframe {
-    border-radius: 8px;
-    transition: opacity 0.3s ease;
+.song:hover {
+    background: #2a2a4e;
+    transform: translateX(5px);
 }
 
-.playlist-controls {
+.song.playing {
+    background: #4a90e2;
+    color: white;
+    font-weight: bold;
+}
+
+.music-controls {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 20px;
     margin-bottom: 10px;
-    flex-wrap: wrap;
 }
 
-.playlist-btn {
-    padding: 6px 12px;
-    background: #333;
-    color: #9bbc0f;
+.music-controls button {
+    width: 50px;
+    height: 50px;
     border: none;
-    border-radius
+    border-radius: 50%;
+    background: #4a90e2;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.music-controls button:hover {
+    transform: scale(1.1);
+    background: #357abd;
+}
+
+.now-playing {
+    text-align: center;
+    color: #9bbc0f;
+    font-size: 12px;
+    padding: 5px;
+}
+
+/* Tetris Screen */
+.tetris-header {
+    background: #1a1a1a;
+    color: #9bbc0f;
+    padding: 10px;
+    text-align: center;
+}
+
+.tetris-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.tetris-game {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background: #000;
+}
+
+#tetris-canvas {
+    border: 2px solid #9bbc0f;
+    background: #000;
+}
+
+.tetris-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.tetris-btn {
+    padding: 8px 12px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tetris-btn:hover {
+    background: #357abd;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #2d5016;
+    border: 4px solid #9bbc0f;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    max-width: 300px;
+}
+
+.game-over-text {
+    color: #ff4444;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    animation: blink 1s infinite;
+}
+
+.final-message-title {
+    color: #ffff00;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.final-message-text {
+    color: #9bbc0f;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.love-text {
+    color: #ff69b4;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 100px;
+}
+
+.modal-btn:hover {
+    background: #357abd;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .gameboy-body, .page-container {
+        transform: scale(0.8);
+    }
+}
