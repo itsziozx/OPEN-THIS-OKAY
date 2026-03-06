@@ -5,30 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password protection (FIX) -->
-    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
-    <script>
-        let vConsoleInstance = null;
-        window.unlockVConsole = function() {
-            const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
-            if (pwd === '12234455ZXXZ') {
-                vConsoleInstance = new VConsole();
-                console.log('✅ vConsole activated');
-                alert('✅ Debug mode enabled');
-            } else {
-                alert('❌ Wrong password');
-            }
-        };
-        let vcClickCount = 0;
-        window.secretVConsole = function() {
-            vcClickCount++;
-            if (vcClickCount >= 10) {
+    <!-- vConsole with Konami Code trigger -->
+<script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
+<script>
+    let vConsoleInstance = null;
+    let konamiIndex = 0;
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    
+    // Fungsi buat unlock vConsole (pake password)
+    window.unlockVConsole = function() {
+        const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
+        if (pwd === '12234455ZXXZ') {
+            vConsoleInstance = new VConsole();
+            console.log('✅ vConsole activated');
+            alert('✅ Debug mode enabled');
+        } else {
+            alert('❌ Wrong password');
+        }
+    };
+    
+    // Deteksi keyboard untuk Konami Code
+    document.addEventListener('keydown', function(e) {
+        const key = e.key;
+        
+        if (key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
                 unlockVConsole();
-                vcClickCount = 0;
+                konamiIndex = 0;
             }
-            setTimeout(() => vcClickCount = 0, 3000);
-        };
-    </script>
+        } else {
+            konamiIndex = 0;
+        }
+    });
+    
+    // Support buat HP (pake tombol A, B, panah)
+    window.checkKonami = function(key) {
+        if (key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                unlockVConsole();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    };
+    
+    console.log('🎮 Konami Code ready (↑↑↓↓←→←→ B A)');
+</script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
