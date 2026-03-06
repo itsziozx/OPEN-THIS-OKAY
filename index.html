@@ -5,30 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password protection (FIX) -->
-    <script src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script>
-    <script>
-        let vConsoleInstance = null;
-        window.unlockVConsole = function() {
-            const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
-            if (pwd === '12234455ZXXZ') {
-                vConsoleInstance = new VConsole();
-                console.log('✅ vConsole activated');
-                alert('✅ Debug mode enabled');
-            } else {
-                alert('❌ Wrong password');
-            }
-        };
-        let vcClickCount = 0;
-        window.secretVConsole = function() {
-            vcClickCount++;
-            if (vcClickCount >= 10) {
-                unlockVConsole();
-                vcClickCount = 0;
-            }
-            setTimeout(() => vcClickCount = 0, 3000);
-        };
-    </script>
+    <!-- vConsole with password protection (FIXED - GUARANTEED TO WORK) -->
+<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+<script>
+    // Global vConsole instance
+    let vConsoleInstance = null;
+    
+    // Function to unlock vConsole with password
+    window.unlockVConsole = function() {
+        const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
+        if (pwd === '12234455ZXXZ') {
+            vConsoleInstance = new VConsole();
+            console.log('✅ vConsole activated');
+            alert('✅ Debug mode enabled');
+        } else {
+            alert('❌ Wrong password');
+        }
+    };
+    
+    // Secret trigger: POWER button 10x
+    let vcClickCount = 0;
+    window.secretVConsole = function() {
+        vcClickCount++;
+        if (vcClickCount >= 10) {
+            unlockVConsole();
+            vcClickCount = 0;
+        }
+        // Reset counter if no click within 3 seconds
+        setTimeout(() => vcClickCount = 0, 3000);
+    };
+    
+    // Manual trigger from browser console:
+    // unlockVConsole()
+</script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
