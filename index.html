@@ -5,37 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password - POSITION TOP RIGHT -->
+    <!-- vConsole with password - FIXED -->
 <script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
 <script>
-    // Fungsi buat unlock pake password
+    // HAPUS semua inisialisasi vConsole sebelumnya!
+    // JANGAN PANGGIL new VConsole() di sini
+    
+    let vConsoleInstance = null;
+    
     window.unlockVConsole = function() {
         const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
         if (pwd === '12234455ZXXZ') {
+            // Hapus tombol lama kalo ada
+            const oldBtn = document.querySelector('.vc-switch');
+            if (oldBtn) oldBtn.remove();
+            
             // Buat instance baru
-            var vc = new VConsole();
-            
-            // Pindahin tombol ke pojok kanan atas
-            setTimeout(() => {
-                const switchBtn = document.querySelector('.vc-switch');
-                if (switchBtn) {
-                    switchBtn.style.bottom = 'auto';
-                    switchBtn.style.top = '20px';
-                    switchBtn.style.right = '20px';
-                    switchBtn.style.left = 'auto';
-                }
-            }, 500);
-            
-            console.log('✅ vConsole activated');
+            vConsoleInstance = new VConsole();
+            console.log('✅ vConsole unlocked');
             alert('✅ Debug mode enabled');
         } else {
             alert('❌ Wrong password');
         }
     };
     
-    // Trigger POWER 10x (panggil dari tombol POWER)
+    // POWER 10x trigger
     let vcClickCount = 0;
-    window.secretVConsole = function() {
+    window.powerClick = function() {
         vcClickCount++;
         if (vcClickCount >= 10) {
             unlockVConsole();
@@ -43,6 +39,8 @@
         }
         setTimeout(() => vcClickCount = 0, 3000);
     };
+    
+    console.log('✅ vConsole password system ready (NOT activated)');
 </script>
     
     <style>
