@@ -5,38 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password protection (FIXED - GUARANTEED TO WORK) -->
-<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <!-- vConsole - GUARANTEED TO WORK -->
+<script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
 <script>
-    // Global vConsole instance
-    let vConsoleInstance = null;
-    
-    // Function to unlock vConsole with password
-    window.unlockVConsole = function() {
-        const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
-        if (pwd === '12234455ZXXZ') {
-            vConsoleInstance = new VConsole();
-            console.log('✅ vConsole activated');
-            alert('✅ Debug mode enabled');
-        } else {
-            alert('❌ Wrong password');
-        }
-    };
-    
-    // Secret trigger: POWER button 10x
-    let vcClickCount = 0;
-    window.secretVConsole = function() {
-        vcClickCount++;
-        if (vcClickCount >= 10) {
-            unlockVConsole();
-            vcClickCount = 0;
-        }
-        // Reset counter if no click within 3 seconds
-        setTimeout(() => vcClickCount = 0, 3000);
-    };
-    
-    // Manual trigger from browser console:
-    // unlockVConsole()
+    // Inisialisasi langsung - PASTI MUNCUL
+    var vConsole = new VConsole();
+    console.log('✅ vConsole ready');
 </script>
     
     <style>
