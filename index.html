@@ -5,12 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole - SIMPLE VERSION (GUARANTEED TO WORK) -->
+    <!-- vConsole with password - POSITION TOP RIGHT -->
 <script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
 <script>
-    // Inisialisasi langsung - PASTI MUNCUL
-    var vConsole = new VConsole();
-    console.log('✅ vConsole ready');
+    // Fungsi buat unlock pake password
+    window.unlockVConsole = function() {
+        const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
+        if (pwd === '12234455ZXXZ') {
+            // Buat instance baru
+            var vc = new VConsole();
+            
+            // Pindahin tombol ke pojok kanan atas
+            setTimeout(() => {
+                const switchBtn = document.querySelector('.vc-switch');
+                if (switchBtn) {
+                    switchBtn.style.bottom = 'auto';
+                    switchBtn.style.top = '20px';
+                    switchBtn.style.right = '20px';
+                    switchBtn.style.left = 'auto';
+                }
+            }, 500);
+            
+            console.log('✅ vConsole activated');
+            alert('✅ Debug mode enabled');
+        } else {
+            alert('❌ Wrong password');
+        }
+    };
+    
+    // Trigger POWER 10x (panggil dari tombol POWER)
+    let vcClickCount = 0;
+    window.secretVConsole = function() {
+        vcClickCount++;
+        if (vcClickCount >= 10) {
+            unlockVConsole();
+            vcClickCount = 0;
+        }
+        setTimeout(() => vcClickCount = 0, 3000);
+    };
 </script>
     
     <style>
